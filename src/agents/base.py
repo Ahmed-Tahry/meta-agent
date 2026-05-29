@@ -1,7 +1,7 @@
 from typing import Any
 
 from src.event_bus.bus import event_bus
-from src.tools.registry import Tool
+from src.tools import Tool
 
 
 class Agent:

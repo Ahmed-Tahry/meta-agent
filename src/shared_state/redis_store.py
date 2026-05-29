@@ -24,52 +24,62 @@ class RedisStore:
         return f"task:{task_id}:subtask:{subtask_id}"
 
     async def set_task_status(self, task_id: str, status: str) -> None:
-        assert self._redis
+        if not self._redis:
+            return
         await self._redis.hset(self._task_key(task_id), "status", status)
 
     async def get_task_status(self, task_id: str) -> str | None:
-        assert self._redis
+        if not self._redis:
+            return None
         return await self._redis.hget(self._task_key(task_id), "status")
 
     async def set_subtask_status(self, task_id: str, subtask_id: str, status: str) -> None:
-        assert self._redis
+        if not self._redis:
+            return
         key = self._subtask_key(task_id, subtask_id)
         await self._redis.hset(key, "status", status)
 
     async def get_subtask_status(self, task_id: str, subtask_id: str) -> str | None:
-        assert self._redis
+        if not self._redis:
+            return None
         key = self._subtask_key(task_id, subtask_id)
         return await self._redis.hget(key, "status")
 
     async def set_subtask_summary(self, task_id: str, subtask_id: str, summary: dict[str, Any]) -> None:
-        assert self._redis
+        if not self._redis:
+            return
         key = self._subtask_key(task_id, subtask_id)
         await self._redis.hset(key, "summary", json.dumps(summary))
 
     async def get_subtask_summary(self, task_id: str, subtask_id: str) -> dict[str, Any] | None:
-        assert self._redis
+        if not self._redis:
+            return None
         key = self._subtask_key(task_id, subtask_id)
         raw = await self._redis.hget(key, "summary")
         return json.loads(raw) if raw else None
 
     async def set_result(self, task_id: str, result: Any) -> None:
-        assert self._redis
+        if not self._redis:
+            return
         key = self._task_key(task_id)
         await self._redis.hset(key, "result", json.dumps(result))
 
     async def get_result(self, task_id: str) -> Any:
-        assert self._redis
+        if not self._redis:
+            return None
         key = self._task_key(task_id)
         raw = await self._redis.hget(key, "result")
         return json.loads(raw) if raw else None
 
     async def set_goal(self, task_id: str, goal: str) -> None:
-        assert self._redis
+        if not self._redis:
+            return
         key = self._task_key(task_id)
         await self._redis.hset(key, "goal", goal)
 
     async def get_goal(self, task_id: str) -> str | None:
-        assert self._redis
+        if not self._redis:
+            return None
         key = self._task_key(task_id)
         return await self._redis.hget(key, "goal")
 

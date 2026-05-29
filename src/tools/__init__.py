@@ -1,4 +1,20 @@
-from src.tools.registry import Tool
+from collections.abc import Callable, Coroutine
+from typing import Any
+
+
+class Tool:
+    def __init__(
+        self,
+        name: str,
+        fn: Callable[..., Coroutine[Any, Any, str]],
+        description: str = "",
+    ) -> None:
+        self.name = name
+        self.fn = fn
+        self.description = description
+
+    async def run(self, **kwargs: Any) -> str:
+        return await self.fn(**kwargs)
 
 
 class ToolRegistry:
@@ -11,7 +27,7 @@ class ToolRegistry:
     def get(self, name: str) -> Tool | None:
         return self._tools.get(name)
 
-    def list(self) -> list[str]:
+    def list_tools(self) -> list[str]:
         return list(self._tools.keys())
 
     def get_multiple(self, names: list[str]) -> list[Tool]:

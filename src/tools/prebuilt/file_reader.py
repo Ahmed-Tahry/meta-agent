@@ -1,4 +1,4 @@
-from src.tools.registry import Tool
+from src.tools import Tool
 
 
 async def file_reader(path: str) -> str:

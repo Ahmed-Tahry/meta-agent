@@ -1,2 +1,5 @@
 plan.md
 .env
+__pycache__/
+*.egg-info/
+.venv/

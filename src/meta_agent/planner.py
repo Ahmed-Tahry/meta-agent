@@ -1,3 +1,4 @@
+import json
 from typing import Any
 
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -5,17 +6,21 @@ from langchain_core.messages import HumanMessage, SystemMessage
 
 from src.config import GEMINI_API_KEY, GEMINI_MODEL
 from src.types.agent_spec import AgentSpec
-from src.types.task import Subtask, Task
+from src.types.task import Subtask
 from src.event_bus.bus import event_bus
-from src.shared_state.redis_store import store
 
 
 class Planner:
     def __init__(self) -> None:
-        self.llm = ChatGoogleGenerativeAI(
-            model=GEMINI_MODEL,
-            google_api_key=GEMINI_API_KEY,
-        )
+        self._llm: ChatGoogleGenerativeAI | None = None
+
+    def _get_llm(self) -> ChatGoogleGenerativeAI:
+        if self._llm is None:
+            self._llm = ChatGoogleGenerativeAI(
+                model=GEMINI_MODEL,
+                google_api_key=GEMINI_API_KEY,
+            )
+        return self._llm
 
     async def decompose(self, goal: str, task_id: str) -> list[Subtask]:
         event_bus.emit(task_id, "node", {"node": "planner", "status": "running"})
@@ -28,6 +33,7 @@ Return a JSON list where each item has:
 - goal: what this subtask should accomplish
 - tools: list of tool names (available: web_search, file_reader, code_executor)
 - depends_on: list of agent_ids this subtask depends on (empty list if none)
+- output_format: "text" or "json"
 
 Goal: {goal}"""
 
@@ -36,7 +42,8 @@ Goal: {goal}"""
             HumanMessage(content=prompt),
         ]
 
-        response = await self.llm.ainvoke(messages)
+        llm = self._get_llm()
+        response = await llm.ainvoke(messages)
         subtasks_data = self._parse_response(response.content)
         subtasks = []
         for i, item in enumerate(subtasks_data):
@@ -62,8 +69,7 @@ Goal: {goal}"""
         })
         return subtasks
 
-    def _parse_response(self, content: str) -> list[dict]:
-        import json
+    def _parse_response(self, content: str) -> list[dict[str, Any]]:
         content = content.strip()
         if content.startswith("```"):
             content = content.split("\n", 1)[-1]
