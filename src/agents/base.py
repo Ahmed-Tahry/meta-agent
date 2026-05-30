@@ -78,7 +78,10 @@ class Agent:
 
         response = await llm.ainvoke(messages)
 
-        while response.tool_calls:
+        max_tool_calls = 10
+        tool_call_count = 0
+
+        while response.tool_calls and tool_call_count < max_tool_calls:
             for tc in response.tool_calls:
                 tool = self._tool_map.get(tc["name"])
                 if not tool:
@@ -102,6 +105,7 @@ class Agent:
                 messages.append(ToolMessage(content=result, tool_call_id=tc["id"]))
 
             response = await llm.ainvoke(messages)
+            tool_call_count += 1
 
         self.messages.append(user)
         self.messages.append(response)

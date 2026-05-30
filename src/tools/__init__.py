@@ -1,7 +1,7 @@
 from collections.abc import Callable, Coroutine
 from typing import Any
 
-from langchain_core.tools import tool as lc_tool, BaseTool
+from langchain_core.tools import StructuredTool, BaseTool
 
 
 class Tool:
@@ -19,13 +19,11 @@ class Tool:
         return await self.fn(**kwargs)
 
     def to_langchain_tool(self) -> BaseTool:
-        fn = self.fn
-
-        @lc_tool(self.name, description=self.description)
-        async def wrapper(**kwargs: Any) -> str:
-            return await fn(**kwargs)
-
-        return wrapper
+        return StructuredTool.from_function(
+            name=self.name,
+            description=self.description,
+            coroutine=self.fn,
+        )
 
 
 class ToolRegistry:
