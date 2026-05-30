@@ -1,3 +1,4 @@
+import asyncio
 import json
 from typing import Any
 
@@ -104,6 +105,7 @@ class Agent:
 
                 messages.append(ToolMessage(content=result, tool_call_id=tc["id"]))
 
+            await asyncio.sleep(1)
             response = await llm.ainvoke(messages)
             tool_call_count += 1
 
