@@ -1,6 +1,12 @@
+import json
 from typing import Any
 
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.messages import SystemMessage, HumanMessage, ToolMessage
+
+from src.config import GEMINI_API_KEY, GEMINI_MODEL
 from src.event_bus.bus import event_bus
+from src.shared_state.redis_store import store
 from src.tools import Tool
 
 
@@ -14,23 +20,89 @@ class Agent:
         self.agent_id = agent_id
         self.system_prompt = system_prompt
         self.tools = tools
-        self.messages: list[dict[str, Any]] = []
+        self._llm: ChatGoogleGenerativeAI | None = None
+        self.messages: list = []
+        self._tool_map: dict[str, Tool] = {t.name: t for t in tools}
+
+    def _get_llm(self) -> ChatGoogleGenerativeAI:
+        if self._llm is None:
+            self._llm = ChatGoogleGenerativeAI(
+                model=GEMINI_MODEL,
+                google_api_key=GEMINI_API_KEY,
+            )
+        return self._llm
+
+    def _build_context(self, shared_state: dict[str, Any]) -> str:
+        if not shared_state:
+            return ""
+        parts = []
+        for agent_id, data in shared_state.items():
+            output = data.get("output", "")
+            summary = output[:500] if isinstance(output, str) else json.dumps(output)[:500]
+            parts.append(f"From {agent_id}: {summary}")
+        return "\n\nPrevious findings:\n" + "\n".join(parts)
+
+    async def _append_trace(self, task_id: str, entry: dict) -> None:
+        entry["agent_id"] = self.agent_id
+        await store.append_trace(task_id, entry)
 
     async def run(self, task_id: str, goal: str, shared_state: dict[str, Any]) -> str:
         event_bus.emit(task_id, "subtask", {"agent_id": self.agent_id, "status": "running"})
+        await self._append_trace(task_id, {"type": "agent_start", "goal": goal, "shared_state": bool(shared_state)})
 
         tool_descriptions = "\n".join(f"- {t.name}: {t.description}" for t in self.tools)
-        prompt = f"{self.system_prompt}\n\nGoal: {goal}\n\nTools available:\n{tool_descriptions}"
-        self.messages.append({"role": "user", "content": prompt})
-
-        result = self._execute(task_id, goal)
+        context = self._build_context(shared_state)
+        result = await self._execute(task_id, goal, tool_descriptions, context)
 
         event_bus.emit(task_id, "subtask", {
             "agent_id": self.agent_id,
             "status": "done",
             "summary": {"output": result},
         })
+        await self._append_trace(task_id, {"type": "agent_done", "output_preview": result[:200]})
         return result
 
-    def _execute(self, task_id: str, goal: str) -> str:
-        return f"[{self.agent_id}] Processed: {goal}"
+    async def _execute(self, task_id: str, goal: str, tool_descriptions: str, context: str) -> str:
+        system = SystemMessage(content=self.system_prompt)
+        user_content = f"Goal: {goal}\n\nTools available:\n{tool_descriptions}{context}"
+        user = HumanMessage(content=user_content)
+        messages = [system] + self.messages + [user]
+
+        await self._append_trace(task_id, {"type": "agent_llm_call", "prompt": user_content})
+
+        if self.tools:
+            lc_tools = [t.to_langchain_tool() for t in self.tools]
+            llm = self._get_llm().bind_tools(lc_tools)
+        else:
+            llm = self._get_llm()
+
+        response = await llm.ainvoke(messages)
+
+        while response.tool_calls:
+            for tc in response.tool_calls:
+                tool = self._tool_map.get(tc["name"])
+                if not tool:
+                    continue
+                await self._append_trace(task_id, {
+                    "type": "tool_call", "tool": tc["name"], "args": tc["args"],
+                })
+                event_bus.emit(task_id, "tool_call", {
+                    "agent_id": self.agent_id, "tool": tc["name"], "args": tc["args"],
+                })
+
+                result = await tool.run(**tc["args"])
+
+                await self._append_trace(task_id, {
+                    "type": "tool_result", "tool": tc["name"], "result": result,
+                })
+                event_bus.emit(task_id, "tool_result", {
+                    "agent_id": self.agent_id, "tool": tc["name"], "result": result,
+                })
+
+                messages.append(ToolMessage(content=result, tool_call_id=tc["id"]))
+
+            response = await llm.ainvoke(messages)
+
+        self.messages.append(user)
+        self.messages.append(response)
+        return response.content

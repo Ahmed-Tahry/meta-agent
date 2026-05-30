@@ -30,8 +30,8 @@ class TestRoutes:
 
             response = await client.post("/run", json={"goal": "research competitors"})
             mock_orch.start.assert_called_once()
-            args = mock_orch.start.call_args
-            assert args[1]["goal"] == "research competitors"
+            args, _ = mock_orch.start.call_args
+            assert args[0] == "research competitors"
 
     @pytest.mark.asyncio
     async def test_run_invalid_body(self, client):
@@ -93,7 +93,7 @@ class TestRoutes:
 
             async with client.stream("GET", "/tasks/task_01/stream") as response:
                 assert response.status_code == 200
-                assert response.headers["content-type"] == "text/event-stream"
+                assert response.headers["content-type"].startswith("text/event-stream")
 
                 content = b""
                 async for chunk in response.aiter_bytes():

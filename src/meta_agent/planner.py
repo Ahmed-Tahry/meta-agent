@@ -8,6 +8,7 @@ from src.config import GEMINI_API_KEY, GEMINI_MODEL
 from src.types.agent_spec import AgentSpec
 from src.types.task import Subtask
 from src.event_bus.bus import event_bus
+from src.shared_state.redis_store import store
 
 
 class Planner:
@@ -37,6 +38,8 @@ Return a JSON list where each item has:
 
 Goal: {goal}"""
 
+        await store.append_trace(task_id, {"type": "planner_prompt", "prompt": prompt})
+
         messages = [
             SystemMessage(content="You are a task planner. Decompose goals into subtasks."),
             HumanMessage(content=prompt),
@@ -44,6 +47,9 @@ Goal: {goal}"""
 
         llm = self._get_llm()
         response = await llm.ainvoke(messages)
+
+        await store.append_trace(task_id, {"type": "planner_response", "response": response.content})
+
         subtasks_data = self._parse_response(response.content)
         subtasks = []
         for i, item in enumerate(subtasks_data):
@@ -61,6 +67,11 @@ Goal: {goal}"""
                 depends_on=item.get("depends_on", []),
             )
             subtasks.append(subtask)
+
+        await store.append_trace(task_id, {
+            "type": "plan",
+            "subtasks": [{"agent_id": s.agent_spec.agent_id, "goal": s.agent_spec.goal, "depends_on": s.depends_on} for s in subtasks],
+        })
 
         event_bus.emit(task_id, "node", {
             "node": "planner",

@@ -83,5 +83,18 @@ class RedisStore:
         key = self._task_key(task_id)
         return await self._redis.hget(key, "goal")
 
+    async def append_trace(self, task_id: str, entry: dict) -> None:
+        if not self._redis:
+            return
+        key = f"task:{task_id}:trace"
+        await self._redis.rpush(key, json.dumps(entry))
+
+    async def get_trace(self, task_id: str) -> list[dict]:
+        if not self._redis:
+            return []
+        key = f"task:{task_id}:trace"
+        raw = await self._redis.lrange(key, 0, -1)
+        return [json.loads(e) for e in raw]
+
 
 store = RedisStore()

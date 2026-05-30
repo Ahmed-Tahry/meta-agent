@@ -35,9 +35,9 @@ class TestToolRegistry:
         assert registry.get("nonexistent") is None
 
     def test_list(self, registry, sample_tool):
-        assert registry.list() == []
+        assert registry.list_tools() == []
         registry.register(sample_tool)
-        assert registry.list() == ["test_tool"]
+        assert registry.list_tools() == ["test_tool"]
 
     def test_get_multiple(self, registry):
         async def fn1(): pass
@@ -62,7 +62,7 @@ class TestToolRegistry:
 
 class TestGlobalRegistry:
     def test_prebuilt_tools_registered(self):
-        tools = tool_registry.list()
+        tools = tool_registry.list_tools()
         assert "web_search" in tools
         assert "file_reader" in tools
         assert "code_executor" in tools

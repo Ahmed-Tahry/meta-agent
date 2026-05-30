@@ -28,18 +28,23 @@ class TestOrchestrator:
         mock_agent.run = AsyncMock(return_value="research results")
         mock_agent.agent_id = "researcher_01"
 
+        mock_planner_obj = MagicMock()
+        mock_planner_obj.decompose = AsyncMock(return_value=[mock_subtask])
+        mock_evaluator_obj = MagicMock()
+        mock_evaluator_obj.evaluate = AsyncMock(return_value=True)
+        mock_synthesizer_obj = MagicMock()
+        mock_synthesizer_obj.synthesize = AsyncMock(return_value="final result")
+        mock_factory_obj = MagicMock()
+        mock_factory_obj.create = MagicMock(return_value=mock_agent)
+
         with (
-            patch.object(orchestrator, "planner") as mock_planner,
-            patch.object(orchestrator, "evaluator") as mock_evaluator,
-            patch.object(orchestrator, "synthesizer") as mock_synthesizer,
-            patch.object(orchestrator, "factory") as mock_factory,
+            patch.object(orchestrator, "_get_planner", return_value=mock_planner_obj),
+            patch.object(orchestrator, "_get_evaluator", return_value=mock_evaluator_obj),
+            patch.object(orchestrator, "_get_synthesizer", return_value=mock_synthesizer_obj),
+            patch.object(orchestrator, "_get_factory", return_value=mock_factory_obj),
             patch("src.meta_agent.orchestrator.store") as mock_store,
             patch("src.meta_agent.orchestrator.event_bus") as mock_bus,
         ):
-            mock_planner.decompose = AsyncMock(return_value=[mock_subtask])
-            mock_factory.create = MagicMock(return_value=mock_agent)
-            mock_evaluator.evaluate = AsyncMock(return_value=True)
-            mock_synthesizer.synthesize = AsyncMock(return_value="final result")
             mock_store.set_task_status = AsyncMock()
             mock_store.set_goal = AsyncMock()
             mock_store.set_subtask_status = AsyncMock()
@@ -51,11 +56,11 @@ class TestOrchestrator:
 
             await orchestrator._run("test goal", "task_01")
 
-            mock_planner.decompose.assert_called_once_with("test goal", "task_01")
-            mock_factory.create.assert_called_once_with(mock_subtask.agent_spec)
+            mock_planner_obj.decompose.assert_called_once_with("test goal", "task_01")
+            mock_factory_obj.create.assert_called_once_with(mock_subtask.agent_spec)
             mock_agent.run.assert_called_once_with("task_01", "find info", {})
-            mock_evaluator.evaluate.assert_called_once_with("task_01", "researcher_01", "research results")
-            mock_synthesizer.synthesize.assert_called_once_with("task_01", {"researcher_01": "research results"})
+            mock_evaluator_obj.evaluate.assert_called_once_with("task_01", "researcher_01", "research results")
+            mock_synthesizer_obj.synthesize.assert_called_once_with("task_01", {"researcher_01": "research results"})
 
     @pytest.mark.asyncio
     async def test_run_with_dependencies(self, orchestrator):
@@ -76,18 +81,23 @@ class TestOrchestrator:
         mock_agent_writer = AsyncMock()
         mock_agent_writer.run = AsyncMock(return_value="written report")
 
+        mock_planner_obj = MagicMock()
+        mock_planner_obj.decompose = AsyncMock(return_value=[mock_res, mock_writer])
+        mock_evaluator_obj = MagicMock()
+        mock_evaluator_obj.evaluate = AsyncMock(return_value=True)
+        mock_synthesizer_obj = MagicMock()
+        mock_synthesizer_obj.synthesize = AsyncMock(return_value="final")
+        mock_factory_obj = MagicMock()
+        mock_factory_obj.create = MagicMock(side_effect=[mock_agent_res, mock_agent_writer])
+
         with (
-            patch.object(orchestrator, "planner") as mock_planner,
-            patch.object(orchestrator, "evaluator") as mock_evaluator,
-            patch.object(orchestrator, "synthesizer") as mock_synthesizer,
-            patch.object(orchestrator, "factory") as mock_factory,
+            patch.object(orchestrator, "_get_planner", return_value=mock_planner_obj),
+            patch.object(orchestrator, "_get_evaluator", return_value=mock_evaluator_obj),
+            patch.object(orchestrator, "_get_synthesizer", return_value=mock_synthesizer_obj),
+            patch.object(orchestrator, "_get_factory", return_value=mock_factory_obj),
             patch("src.meta_agent.orchestrator.store") as mock_store,
             patch("src.meta_agent.orchestrator.event_bus") as mock_bus,
         ):
-            mock_planner.decompose = AsyncMock(return_value=[mock_res, mock_writer])
-            mock_factory.create = MagicMock(side_effect=[mock_agent_res, mock_agent_writer])
-            mock_evaluator.evaluate = AsyncMock(return_value=True)
-            mock_synthesizer.synthesize = AsyncMock(return_value="final")
             mock_store.set_task_status = AsyncMock()
             mock_store.set_goal = AsyncMock()
             mock_store.set_subtask_status = AsyncMock()
@@ -113,18 +123,23 @@ class TestOrchestrator:
         mock_agent = AsyncMock()
         mock_agent.run = AsyncMock(return_value="")
 
+        mock_planner_obj = MagicMock()
+        mock_planner_obj.decompose = AsyncMock(return_value=[mock_subtask])
+        mock_evaluator_obj = MagicMock()
+        mock_evaluator_obj.evaluate = AsyncMock(return_value=False)
+        mock_synthesizer_obj = MagicMock()
+        mock_synthesizer_obj.synthesize = AsyncMock(return_value="final")
+        mock_factory_obj = MagicMock()
+        mock_factory_obj.create = MagicMock(return_value=mock_agent)
+
         with (
-            patch.object(orchestrator, "planner") as mock_planner,
-            patch.object(orchestrator, "evaluator") as mock_evaluator,
-            patch.object(orchestrator, "synthesizer") as mock_synthesizer,
-            patch.object(orchestrator, "factory") as mock_factory,
+            patch.object(orchestrator, "_get_planner", return_value=mock_planner_obj),
+            patch.object(orchestrator, "_get_evaluator", return_value=mock_evaluator_obj),
+            patch.object(orchestrator, "_get_synthesizer", return_value=mock_synthesizer_obj),
+            patch.object(orchestrator, "_get_factory", return_value=mock_factory_obj),
             patch("src.meta_agent.orchestrator.store") as mock_store,
             patch("src.meta_agent.orchestrator.event_bus") as mock_bus,
         ):
-            mock_planner.decompose = AsyncMock(return_value=[mock_subtask])
-            mock_factory.create = MagicMock(return_value=mock_agent)
-            mock_evaluator.evaluate = AsyncMock(return_value=False)
-            mock_synthesizer.synthesize = AsyncMock(return_value="final")
             mock_store.set_task_status = AsyncMock()
             mock_store.set_goal = AsyncMock()
             mock_store.set_subtask_status = AsyncMock()

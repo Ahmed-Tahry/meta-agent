@@ -1,6 +1,8 @@
 from collections.abc import Callable, Coroutine
 from typing import Any
 
+from langchain_core.tools import tool as lc_tool, BaseTool
+
 
 class Tool:
     def __init__(
@@ -15,6 +17,15 @@ class Tool:
 
     async def run(self, **kwargs: Any) -> str:
         return await self.fn(**kwargs)
+
+    def to_langchain_tool(self) -> BaseTool:
+        fn = self.fn
+
+        @lc_tool(self.name, description=self.description)
+        async def wrapper(**kwargs: Any) -> str:
+            return await fn(**kwargs)
+
+        return wrapper
 
 
 class ToolRegistry:

@@ -33,14 +33,14 @@ class TestPlanner:
     @pytest.fixture
     def planner(self):
         p = Planner()
-        p.llm = AsyncMock()
+        p._llm = AsyncMock()
         return p
 
     @pytest.mark.asyncio
     async def test_decompose_returns_subtasks(self, planner):
         mock_msg = MagicMock()
         mock_msg.content = SAMPLE_RESPONSE
-        planner.llm.ainvoke = AsyncMock(return_value=mock_msg)
+        planner._llm.ainvoke = AsyncMock(return_value=mock_msg)
 
         subtasks = await planner.decompose("Research competitors", "task_01")
 
@@ -59,11 +59,11 @@ class TestPlanner:
     async def test_decompose_calls_llm_with_goal(self, planner):
         mock_msg = MagicMock()
         mock_msg.content = SAMPLE_RESPONSE
-        planner.llm.ainvoke = AsyncMock(return_value=mock_msg)
+        planner._llm.ainvoke = AsyncMock(return_value=mock_msg)
 
         await planner.decompose("test goal", "task_01")
-        planner.llm.ainvoke.assert_called_once()
-        call_args = planner.llm.ainvoke.call_args[0][0]
+        planner._llm.ainvoke.assert_called_once()
+        call_args = planner._llm.ainvoke.call_args[0][0]
         messages_str = str(call_args)
         assert "test goal" in messages_str
 
@@ -71,7 +71,7 @@ class TestPlanner:
     async def test_decompose_malformed_response(self, planner):
         mock_msg = MagicMock()
         mock_msg.content = MALFORMED_RESPONSE
-        planner.llm.ainvoke = AsyncMock(return_value=mock_msg)
+        planner._llm.ainvoke = AsyncMock(return_value=mock_msg)
 
         subtasks = await planner.decompose("test", "task_01")
         assert subtasks == []
@@ -97,7 +97,7 @@ class TestPlanner:
     async def test_emits_events(self, planner):
         mock_msg = MagicMock()
         mock_msg.content = SAMPLE_RESPONSE
-        planner.llm.ainvoke = AsyncMock(return_value=mock_msg)
+        planner._llm.ainvoke = AsyncMock(return_value=mock_msg)
 
         with patch("src.meta_agent.planner.event_bus") as mock_bus:
             await planner.decompose("test", "task_01")
