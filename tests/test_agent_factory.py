@@ -94,3 +94,34 @@ class TestAgentFactory:
         )
         agent = factory.create(spec)
         assert isinstance(agent, Agent)
+
+    @pytest.mark.asyncio
+    async def test_create_dynamic_uses_prompt_builder(self, factory):
+        from src.types.agent_spec import AgentSpec
+
+        spec = AgentSpec(
+            agent_id="researcher_02",
+            role="researcher",
+            goal="find facts",
+            tools=["web_search"],
+        )
+        factory.prompt_builder.build = AsyncMock(return_value="DYNAMIC PROMPT")
+
+        agent = await factory.create_dynamic(spec)
+
+        assert agent.system_prompt == "DYNAMIC PROMPT"
+        factory.prompt_builder.build.assert_called_once()
+
+    def test_create_with_composed_tool(self, factory):
+        from src.types.agent_spec import AgentSpec
+
+        spec = AgentSpec(
+            agent_id="researcher_03",
+            role="researcher",
+            goal="research then read",
+            tools=["web_search|file_reader"],
+        )
+
+        agent = factory.create(spec)
+        assert len(agent.tools) == 1
+        assert agent.tools[0].name == "web_search|file_reader"

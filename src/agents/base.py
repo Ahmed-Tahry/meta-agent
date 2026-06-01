@@ -81,6 +81,7 @@ class Agent:
 
         max_tool_calls = 10
         tool_call_count = 0
+        tool_results: list[str] = []
 
         while response.tool_calls and tool_call_count < max_tool_calls:
             for tc in response.tool_calls:
@@ -95,6 +96,7 @@ class Agent:
                 })
 
                 result = await tool.run(**tc["args"])
+                tool_results.append(result)
 
                 await self._append_trace(task_id, {
                     "type": "tool_result", "tool": tc["name"], "result": result,
@@ -109,6 +111,29 @@ class Agent:
             response = await llm.ainvoke(messages)
             tool_call_count += 1
 
+        if response.tool_calls and tool_call_count >= max_tool_calls:
+            await self._append_trace(task_id, {
+                "type": "tool_call_limit_reached",
+                "max_tool_calls": max_tool_calls,
+            })
+            event_bus.emit(task_id, "error", {
+                "subtask_id": self.agent_id,
+                "message": f"Reached max tool-call rounds ({max_tool_calls})",
+            })
+
         self.messages.append(user)
         self.messages.append(response)
-        return response.content
+
+        final_content = response.content if isinstance(response.content, str) else str(response.content)
+        if final_content.strip():
+            return final_content
+
+        if tool_results:
+            preview = "\n".join(f"- {x}" for x in tool_results[-3:])
+            return (
+                f"Could not get additional model narrative after tool usage for goal: {goal}.\n"
+                "Recent tool outputs:\n"
+                f"{preview}"
+            )
+
+        return f"No model response generated for goal: {goal}."
