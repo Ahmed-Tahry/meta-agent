@@ -9,6 +9,7 @@ from src.meta_agent.synthesizer import Synthesizer
 from src.factory.agent_factory import AgentFactory
 from src.event_bus.bus import event_bus
 from src.shared_state.redis_store import store
+from src.config import MAX_RETRIES, RETRY_DELAY
 
 
 class Orchestrator:
@@ -18,7 +19,6 @@ class Orchestrator:
         self._synthesizer: Synthesizer | None = None
         self._factory: AgentFactory | None = None
         self._tasks: dict[str, asyncio.Task] = {}
-        self._max_retries = 3
 
     def _get_planner(self) -> Planner:
         if self._planner is None:
@@ -60,7 +60,7 @@ class Orchestrator:
     ) -> tuple[str, bool, str | None]:
         last_error: str | None = None
 
-        for attempt in range(1, self._max_retries + 1):
+        for attempt in range(1, MAX_RETRIES + 1):
             try:
                 event_bus.emit(task_id, "node", {
                     "node": "spawner",
@@ -69,10 +69,7 @@ class Orchestrator:
                     "attempt": attempt,
                 })
 
-                if isinstance(factory, AgentFactory):
-                    agent = await factory.create_dynamic(subtask.agent_spec)
-                else:
-                    agent = factory.create(subtask.agent_spec)
+                agent = await factory.create_dynamic(subtask.agent_spec)
 
                 event_bus.emit(task_id, "node", {
                     "node": "spawner",
@@ -102,14 +99,14 @@ class Orchestrator:
                     "attempt": attempt,
                 })
 
-            if attempt < self._max_retries:
+            if attempt < MAX_RETRIES:
                 await store.set_subtask_status(task_id, subtask.subtask_id, "retrying")
                 event_bus.emit(task_id, "subtask", {
                     "agent_id": subtask.subtask_id,
                     "status": "retrying",
                     "attempt": attempt + 1,
                 })
-                await asyncio.sleep(1)
+                await asyncio.sleep(RETRY_DELAY)
 
         await store.set_subtask_status(task_id, subtask.subtask_id, "failed")
         event_bus.emit(task_id, "error", {

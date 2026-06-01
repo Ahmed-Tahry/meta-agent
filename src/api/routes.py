@@ -1,3 +1,5 @@
+import json
+import uuid
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
@@ -7,7 +9,6 @@ from pydantic import BaseModel
 from src.event_bus.bus import event_bus
 from src.shared_state.redis_store import store
 from src.meta_agent.orchestrator import orchestrator
-import uuid
 
 
 router = APIRouter()
@@ -54,7 +55,7 @@ async def stream_task(task_id: str) -> StreamingResponse:
         try:
             while True:
                 msg = await queue.get()
-                yield f"event: {msg['event']}\ndata: {msg['data']}\n\n"
+                yield f"event: {msg['event']}\ndata: {json.dumps(msg['data'])}\n\n"
                 if msg["event"] == "complete" or msg["event"] == "error":
                     break
         finally:

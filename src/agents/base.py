@@ -5,7 +5,7 @@ from typing import Any
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage, ToolMessage
 
-from src.config import GEMINI_API_KEY, GEMINI_MODEL
+from src.config import GEMINI_API_KEY, GEMINI_MODEL, MAX_TOOL_CALLS, LLM_TIMEOUT, TOOL_CALL_DELAY
 from src.event_bus.bus import event_bus
 from src.shared_state.redis_store import store
 from src.tools import Tool
@@ -30,6 +30,7 @@ class Agent:
             self._llm = ChatGoogleGenerativeAI(
                 model=GEMINI_MODEL,
                 google_api_key=GEMINI_API_KEY,
+                timeout=LLM_TIMEOUT,
             )
         return self._llm
 
@@ -79,14 +80,20 @@ class Agent:
 
         response = await llm.ainvoke(messages)
 
-        max_tool_calls = 10
         tool_call_count = 0
         tool_results: list[str] = []
 
-        while response.tool_calls and tool_call_count < max_tool_calls:
+        while response.tool_calls and tool_call_count < MAX_TOOL_CALLS:
             for tc in response.tool_calls:
                 tool = self._tool_map.get(tc["name"])
                 if not tool:
+                    await self._append_trace(task_id, {
+                        "type": "unknown_tool_call", "tool": tc["name"], "args": tc["args"],
+                    })
+                    event_bus.emit(task_id, "error", {
+                        "subtask_id": self.agent_id,
+                        "message": f"Unknown tool: {tc['name']}",
+                    })
                     continue
                 await self._append_trace(task_id, {
                     "type": "tool_call", "tool": tc["name"], "args": tc["args"],
@@ -107,18 +114,18 @@ class Agent:
 
                 messages.append(ToolMessage(content=result, tool_call_id=tc["id"]))
 
-            await asyncio.sleep(1)
+            await asyncio.sleep(TOOL_CALL_DELAY)
             response = await llm.ainvoke(messages)
             tool_call_count += 1
 
-        if response.tool_calls and tool_call_count >= max_tool_calls:
+        if response.tool_calls and tool_call_count >= MAX_TOOL_CALLS:
             await self._append_trace(task_id, {
                 "type": "tool_call_limit_reached",
-                "max_tool_calls": max_tool_calls,
+                "max_tool_calls": MAX_TOOL_CALLS,
             })
             event_bus.emit(task_id, "error", {
                 "subtask_id": self.agent_id,
-                "message": f"Reached max tool-call rounds ({max_tool_calls})",
+                "message": f"Reached max tool-call rounds ({MAX_TOOL_CALLS})",
             })
 
         self.messages.append(user)

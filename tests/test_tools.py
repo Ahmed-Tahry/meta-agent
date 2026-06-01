@@ -1,6 +1,5 @@
 import pytest
-from src.tools.registry import Tool
-from src.tools import ToolRegistry, tool_registry
+from src.tools import Tool, ToolRegistry, tool_registry
 
 
 @pytest.fixture

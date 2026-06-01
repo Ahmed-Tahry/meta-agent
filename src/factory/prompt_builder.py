@@ -1,24 +1,26 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage, SystemMessage
 
-from src.config import GEMINI_API_KEY, GEMINI_MODEL
+from src.config import GEMINI_API_KEY, GEMINI_MODEL, LLM_TIMEOUT
 from src.types.agent_spec import AgentSpec
 
 
 class PromptBuilder:
-    def __init__(self) -> None:
+    def __init__(self, use_fallback: bool = False) -> None:
         self._llm: ChatGoogleGenerativeAI | None = None
+        self._use_fallback = use_fallback
 
     def _get_llm(self) -> ChatGoogleGenerativeAI:
         if self._llm is None:
             self._llm = ChatGoogleGenerativeAI(
                 model=GEMINI_MODEL,
                 google_api_key=GEMINI_API_KEY,
+                timeout=LLM_TIMEOUT,
             )
         return self._llm
 
     async def build(self, spec: AgentSpec, base_prompt: str = "") -> str:
-        if not GEMINI_API_KEY or GEMINI_API_KEY == "test-key":
+        if self._use_fallback or not GEMINI_API_KEY:
             return self._fallback_prompt(spec, base_prompt)
 
         prompt = (

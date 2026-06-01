@@ -4,7 +4,7 @@ from typing import Any
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage, SystemMessage
 
-from src.config import GEMINI_API_KEY, GEMINI_MODEL
+from src.config import GEMINI_API_KEY, GEMINI_MODEL, LLM_TIMEOUT
 from src.types.agent_spec import AgentSpec
 from src.types.task import Subtask
 from src.event_bus.bus import event_bus
@@ -20,6 +20,7 @@ class Planner:
             self._llm = ChatGoogleGenerativeAI(
                 model=GEMINI_MODEL,
                 google_api_key=GEMINI_API_KEY,
+                timeout=LLM_TIMEOUT,
             )
         return self._llm
 
@@ -51,6 +52,13 @@ Goal: {goal}"""
         await store.append_trace(task_id, {"type": "planner_response", "response": response.content})
 
         subtasks_data = self._parse_response(response.content)
+        if not subtasks_data:
+            event_bus.emit(task_id, "error", {
+                "node": "planner",
+                "message": "Failed to parse planner JSON output",
+                "raw": response.content,
+            })
+
         subtasks = []
         for i, item in enumerate(subtasks_data):
             spec = AgentSpec(

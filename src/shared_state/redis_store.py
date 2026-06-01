@@ -88,6 +88,7 @@ class RedisStore:
             return
         key = f"task:{task_id}:trace"
         await self._redis.rpush(key, json.dumps(entry))
+        await self._redis.ltrim(key, -1000, -1)
 
     async def get_trace(self, task_id: str) -> list[dict]:
         if not self._redis:

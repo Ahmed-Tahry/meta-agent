@@ -27,6 +27,9 @@ class AgentFactory:
         self.prompt_builder = PromptBuilder()
         self.tool_composer = ToolComposer(tool_registry)
 
+    def _resolve_agent_cls(self, role: str) -> type[Agent]:
+        return AGENT_TYPE_MAP.get(role, Agent)
+
     def _resolve_tools(self, tool_names: list[str]) -> list:
         resolved = []
         for name in tool_names:
@@ -51,12 +54,8 @@ class AgentFactory:
         return resolved
 
     def create(self, spec: AgentSpec) -> Agent:
-        agent_type = spec.agent_id.split("_")[0]
-        agent_cls = AGENT_TYPE_MAP.get(agent_type)
-        if not agent_cls:
-            agent_cls = Agent
-
-        config = self.configs.get(agent_type, {})
+        agent_cls = self._resolve_agent_cls(spec.role)
+        config = self.configs.get(spec.role, {})
         system_prompt = config.get("system_prompt", spec.goal)
         tools = self._resolve_tools(spec.tools)
 
@@ -67,12 +66,8 @@ class AgentFactory:
         )
 
     async def create_dynamic(self, spec: AgentSpec) -> Agent:
-        agent_type = spec.agent_id.split("_")[0]
-        agent_cls = AGENT_TYPE_MAP.get(agent_type)
-        if not agent_cls:
-            agent_cls = Agent
-
-        config = self.configs.get(agent_type, {})
+        agent_cls = self._resolve_agent_cls(spec.role)
+        config = self.configs.get(spec.role, {})
         base_prompt = config.get("system_prompt", "")
         system_prompt = await self.prompt_builder.build(spec, base_prompt)
         tools = self._resolve_tools(spec.tools)
