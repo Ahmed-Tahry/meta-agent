@@ -6,6 +6,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from src.config import GEMINI_API_KEY, GEMINI_MODEL, LLM_TIMEOUT
 from src.event_bus.bus import event_bus
 from src.shared_state.redis_store import store
+from src.task_logger import get_logger
 
 
 class Synthesizer:
@@ -22,15 +23,30 @@ class Synthesizer:
         return self._llm
 
     async def synthesize(self, task_id: str, subtask_outputs: dict[str, Any]) -> str:
+        log = get_logger(task_id)
+
         if not subtask_outputs:
+            log.log("SYNTHESIZER", "No subtask outputs to synthesize — returning empty")
             result = ""
             await store.set_result(task_id, result)
             event_bus.emit(task_id, "complete", {"result": result})
             return result
 
+        log.log("SYNTHESIZER",
+            f"Synthesizing {len(subtask_outputs)} output(s): {list(subtask_outputs.keys())}")
+
+        inputs_detail = "\n".join(
+            f"  [{k}] ({len(str(v))} chars): {str(v)[:200]}..."
+            for k, v in subtask_outputs.items()
+        )
+        log.log_multiline("SYNTHESIZER", "Inputs to synthesis:", inputs_detail)
+
         try:
+            log.log("SYNTHESIZER", "Calling Gemini for LLM synthesis")
             result = await self._llm_synthesize(subtask_outputs)
-        except Exception:
+            log.log("SYNTHESIZER", f"LLM synthesis produced {len(result)} chars")
+        except Exception as e:
+            log.log("SYNTHESIZER", f"LLM synthesis failed, using fallback", str(e))
             result = self._fallback_synthesize(subtask_outputs)
 
         await store.set_result(task_id, result)
@@ -57,6 +73,7 @@ class Synthesizer:
         return response.content if isinstance(response.content, str) else str(response.content)
 
     def _fallback_synthesize(self, subtask_outputs: dict[str, Any]) -> str:
+        log = None
         parts = []
         for agent_id, output in subtask_outputs.items():
             parts.append(f"## {agent_id}\n{output}")
