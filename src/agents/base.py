@@ -8,7 +8,7 @@ from langchain_core.messages import SystemMessage, HumanMessage, ToolMessage
 from src.config import GEMINI_API_KEY, GEMINI_MODEL, MAX_TOOL_CALLS, LLM_TIMEOUT, TOOL_CALL_DELAY
 from src.event_bus.bus import event_bus
 from src.shared_state.redis_store import store
-from src.task_logger import get_logger
+from src.task_logger import get_logger, current_task_id
 from src.tools import Tool
 
 
@@ -58,6 +58,7 @@ class Agent:
             f"goal={goal}  tools={[t.name for t in self.tools]}  "
             f"shared_state_keys={list(shared_state.keys())}")
 
+        current_task_id.set(task_id)
         tool_descriptions = "\n".join(f"- {t.name}: {t.description}" for t in self.tools)
         context = self._build_context(shared_state)
         result = await self._execute(task_id, goal, tool_descriptions, context)

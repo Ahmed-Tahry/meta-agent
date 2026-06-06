@@ -1,8 +1,10 @@
 import json
 import os
+from contextvars import ContextVar
 from datetime import datetime, timezone
 
 LOG_DIR = "logs"
+current_task_id: ContextVar[str] = ContextVar("current_task_id", default="")
 
 
 def _ts() -> str:
@@ -63,6 +65,13 @@ def get_logger(task_id: str, goal: str = "") -> TaskLogger:
     logger = TaskLogger(task_id, goal)
     _loggers[task_id] = logger
     return logger
+
+
+def get_current_logger() -> TaskLogger | None:
+    task_id = current_task_id.get()
+    if not task_id:
+        return None
+    return _loggers.get(task_id)
 
 
 def close_logger(task_id: str) -> None:

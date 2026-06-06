@@ -119,6 +119,9 @@ class ToolGenerator:
         timeout = SANDBOX_TIMEOUT
 
         async def fn(input_text: str) -> str:
+            from src.task_logger import get_current_logger
+            log = get_current_logger()
+
             harness = f"""\
 import asyncio
 
@@ -130,16 +133,35 @@ async def main():
 
 asyncio.run(main())
 """
+            if log:
+                log.log("SANDBOX",
+                    f"Generated tool '{tool_name}' executing in sandbox",
+                    f"input ({len(input_text)} chars): {input_text[:200]}")
             try:
                 result = await sandbox.run(harness, timeout=timeout)
+                if log:
+                    log.log("SANDBOX",
+                        f"Generated tool '{tool_name}' output ({len(result)} chars)")
                 return result.strip() or "(no output)"
             except SandboxTimeout:
+                if log:
+                    log.log("SANDBOX",
+                        f"Generated tool '{tool_name}' timed out ({timeout}s)")
                 return f"Tool execution timed out after {timeout}s."
             except SandboxExecutionError as e:
-                return e.stderr or e.stdout or "Execution failed"
+                err = e.stderr or e.stdout or "Execution failed"
+                if log:
+                    log.log("SANDBOX",
+                        f"Generated tool '{tool_name}' execution error", err)
+                return err
             except SandboxError as e:
+                if log:
+                    log.log("SANDBOX",
+                        f"Generated tool '{tool_name}' sandbox error", str(e))
                 return f"Sandbox error: {e}"
             except FileNotFoundError:
+                if log:
+                    log.log("SANDBOX", "Docker not available for generated tool")
                 return "Docker is not available. Install Docker and start the daemon."
 
         return fn
