@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import AsyncMock, patch, mock_open
 
 from src.factory.agent_factory import AgentFactory, load_agent_configs
+from src.tools import Tool
 
 
 SAMPLE_YAML = """
@@ -111,6 +112,36 @@ class TestAgentFactory:
 
         assert agent.system_prompt == "DYNAMIC PROMPT"
         factory.prompt_builder.build.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_create_dynamic_generates_unknown_tool(self, factory):
+        from src.types.agent_spec import AgentSpec
+
+        spec = AgentSpec(
+            agent_id="researcher_03",
+            role="researcher",
+            goal="analyze custom data",
+            tools=["custom_analyzer"],
+        )
+        factory.prompt_builder.build = AsyncMock(return_value="PROMPT")
+
+        async def fake_fn(input_text: str) -> str:
+            return "generated result"
+
+        generated_tool = Tool(
+            name="custom_analyzer",
+            fn=fake_fn,
+            description="Custom data analyzer",
+        )
+        factory.tool_generator.generate = AsyncMock(return_value=generated_tool)
+
+        agent = await factory.create_dynamic(spec)
+
+        assert len(agent.tools) == 1
+        assert agent.tools[0].name == "custom_analyzer"
+        factory.tool_generator.generate.assert_called_once_with(
+            "custom_analyzer", "analyze custom data"
+        )
 
     def test_create_with_composed_tool(self, factory):
         from src.types.agent_spec import AgentSpec

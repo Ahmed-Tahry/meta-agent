@@ -64,11 +64,12 @@ Access via `from src.task_logger import get_logger, close_logger`.
 
 ## Gotchas
 
-- `web_search` uses **Wikipedia API** only. `file_reader` and `code_executor` are **stubs** returning placeholder messages
+- `web_search` uses **Wikipedia API** only. `file_reader` is a **stub** returning a placeholder message
+- `code_executor` and `ToolGenerator._make_fn` run Python code in Docker sandbox (`--network none --memory 256m --pids-limit 50`, 30s timeout). Docker is required at runtime, not just tests.
+- Docker sandbox image auto-builds on first use by `code_executor` or `ToolGenerator`; `Sandbox.build()` can be called explicitly
 - Tool cleanup in e2e scripts accesses `tool_registry._tools` (private `dict`)
-- Docker sandbox (`sandbox.Dockerfile`) exists but not auto-built; `Sandbox.build()` must be called explicitly
 - Default Gemini model: `gemini-3.1-flash-lite` (env `GEMINI_MODEL`)
-- **Week 4** (sandboxed tool generation) and **Week 5** (evaluation loop) are **not yet implemented**
+- **Week 5** (evaluation loop) is **not yet implemented**
 
 ## Key files
 
@@ -80,7 +81,7 @@ Access via `from src.task_logger import get_logger, close_logger`.
 | `src/meta_agent/planner.py` | Gemini → subtask list; JSON parsing with code-fence/ bracket fallback |
 | `src/factory/agent_factory.py` | Creates agents; resolves tools; generates missing tools via LLM |
 | `src/agents/base.py` | Agent run loop: LLM + tool calls (max 10 rounds) + message history |
-| `src/tools/generator.py` | LLM generates Python function → tests in Docker → registers on pass |
+| `src/tools/generator.py` | LLM generates Python function → tests in Docker → registers on pass; generated tools also execute in Docker sandbox |
 | `src/tools/sandbox.py` | Docker sandbox: `--network none --memory 256m --pids-limit 50`, 30s timeout |
 | `src/task_logger.py` | Per-task pipeline logger: writes `logs/{task_id}.log` |
 | `config/agents.yaml` | System prompts for researcher, coder, writer |

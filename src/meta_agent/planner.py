@@ -61,8 +61,18 @@ Goal: {goal}"""
 
         llm = self._get_llm()
         response = await llm.ainvoke(messages)
-        raw = response.content if isinstance(response.content, str) else str(response.content)
-
+        if isinstance(response.content, str):
+            raw = response.content
+        elif isinstance(response.content, list):
+            # extract text from content blocks
+            raw = "\n".join(
+                block["text"] if isinstance(block, dict) and "text" in block
+                else block.text if hasattr(block, "text")
+                else ""
+                for block in response.content
+            ).strip()
+        else:
+            raw = str(response.content)
         log.log_multiline("PLANNER", "Raw response from Gemini:", raw)
         await store.append_trace(task_id, {"type": "planner_response", "response": raw})
 

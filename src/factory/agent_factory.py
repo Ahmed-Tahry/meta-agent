@@ -6,6 +6,7 @@ from src.agents.coder import CoderAgent
 from src.agents.writer import WriterAgent
 from src.factory.prompt_builder import PromptBuilder
 from src.tools.composer import ToolComposer
+from src.tools.generator import ToolGenerator
 from src.types.agent_spec import AgentSpec
 from src.tools import tool_registry
 
@@ -26,16 +27,18 @@ class AgentFactory:
         self.configs = load_agent_configs(config_path)
         self.prompt_builder = PromptBuilder()
         self.tool_composer = ToolComposer(tool_registry)
+        self.tool_generator = ToolGenerator()
 
     def _resolve_agent_cls(self, role: str) -> type[Agent]:
         return AGENT_TYPE_MAP.get(role, Agent)
 
     def _resolve_tools(self, tool_names: list[str]) -> list:
         resolved = []
+        unregistered: list[str] = []
         for name in tool_names:
-            plain = tool_registry.get(name)
-            if plain:
-                resolved.append(plain)
+            tool = tool_registry.get(name)
+            if tool:
+                resolved.append(tool)
                 continue
 
             if "|" in name:
@@ -51,13 +54,26 @@ class AgentFactory:
                         )
                         tool_registry.register(composed)
                     resolved.append(composed)
-        return resolved
+                    continue
+
+            unregistered.append(name)
+
+        return resolved, unregistered
+
+    async def _generate_missing(self, names: list[str], goal: str, tool_defs: dict[str, str] | None = None) -> list:
+        generated = []
+        for name in names:
+            tool_goal = (tool_defs or {}).get(name, goal)
+            tool = await self.tool_generator.generate(name, tool_goal)
+            tool_registry.register(tool)
+            generated.append(tool)
+        return generated
 
     def create(self, spec: AgentSpec) -> Agent:
         agent_cls = self._resolve_agent_cls(spec.role)
         config = self.configs.get(spec.role, {})
         system_prompt = config.get("system_prompt", spec.goal)
-        tools = self._resolve_tools(spec.tools)
+        tools, _ = self._resolve_tools(spec.tools)
 
         return agent_cls(
             agent_id=spec.agent_id,
@@ -70,7 +86,11 @@ class AgentFactory:
         config = self.configs.get(spec.role, {})
         base_prompt = config.get("system_prompt", "")
         system_prompt = await self.prompt_builder.build(spec, base_prompt)
-        tools = self._resolve_tools(spec.tools)
+        tools, unregistered = self._resolve_tools(spec.tools)
+
+        if unregistered:
+            generated = await self._generate_missing(unregistered, spec.goal, spec.tool_definitions)
+            tools.extend(generated)
 
         return agent_cls(
             agent_id=spec.agent_id,

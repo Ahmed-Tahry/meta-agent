@@ -1,0 +1,296 @@
+======================================================================
+PIPELINE START  |  task_id=task_01
+GOAL            |  
+======================================================================
+
+--- [2026-06-06T09:51:06.284Z] PLANNER ---
+    Calling Gemini to decompose goal
+    model=gemini-3.1-flash-lite
+
+--- [2026-06-06T09:51:06.284Z] PLANNER ---
+    Prompt sent to Gemini:
+    ------------------------------------------------------------
+    | Decompose the following goal into a list of subtasks.
+    | Each subtask must be assigned to one of these agent roles: researcher, coder, writer.
+    | Pre-built tools available: web_search, file_reader, code_executor.
+    | If a subtask requires a capability none of the pre-built tools provide, define a new custom tool 
+    | with a unique name and a clear description of what it should do in tool_definitions.
+    | 
+    | CRITICAL: Your entire response must be ONLY a valid JSON array. No markdown formatting, no code fences, no explanations, no preamble, no postscript. Start with '[' and end with ']'.
+    | 
+    | Each item in the array has:
+    | - agent_id: unique identifier like "researcher_01", "coder_01", "writer_01"
+    | - role: one of "researcher", "coder", "writer"
+    | - goal: what this subtask should accomplish
+    | - tools: list of tool names (pre-built + custom tool names you define)
+    | - tool_definitions: object mapping custom tool names to their goals (e.g. {"my_tool": "what my_tool does"})
+    | - depends_on: list of agent_ids this subtask depends on (empty list if none)
+    | - output_format: "text" or "json"
+    | 
+    | Goal: Research competitors
+    ------------------------------------------------------------
+
+--- [2026-06-06T09:51:06.284Z] PLANNER ---
+    Raw response from Gemini:
+    ------------------------------------------------------------
+    | [
+    |   {
+    |     "agent_id": "researcher_01",
+    |     "role": "researcher",
+    |     "goal": "Search for competitor data",
+    |     "tools": ["web_search"],
+    |     "depends_on": [],
+    |     "output_format": "json"
+    |   },
+    |   {
+    |     "agent_id": "writer_01",
+    |     "role": "writer",
+    |     "goal": "Write a summary report",
+    |     "tools": ["file_reader"],
+    |     "depends_on": ["researcher_01"],
+    |     "output_format": "markdown"
+    |   }
+    | ]
+    ------------------------------------------------------------
+
+--- [2026-06-06T09:51:06.285Z] PLANNER ---
+    Parsed 2 subtask(s) from JSON
+
+--- [2026-06-06T09:51:06.285Z] PLANNER ---
+    Final plan (2 subtasks):
+    ------------------------------------------------------------
+    | [researcher_01] role=researcher  goal=Search for competitor data  tools=['web_search']  output_format=json
+    |   [writer_01] role=writer  goal=Write a summary report  tools=['file_reader']  output_format=markdown
+    ------------------------------------------------------------
+
+--- [2026-06-06T09:51:06.292Z] PLANNER ---
+    Calling Gemini to decompose goal
+    model=gemini-3.1-flash-lite
+
+--- [2026-06-06T09:51:06.292Z] PLANNER ---
+    Prompt sent to Gemini:
+    ------------------------------------------------------------
+    | Decompose the following goal into a list of subtasks.
+    | Each subtask must be assigned to one of these agent roles: researcher, coder, writer.
+    | Pre-built tools available: web_search, file_reader, code_executor.
+    | If a subtask requires a capability none of the pre-built tools provide, define a new custom tool 
+    | with a unique name and a clear description of what it should do in tool_definitions.
+    | 
+    | CRITICAL: Your entire response must be ONLY a valid JSON array. No markdown formatting, no code fences, no explanations, no preamble, no postscript. Start with '[' and end with ']'.
+    | 
+    | Each item in the array has:
+    | - agent_id: unique identifier like "researcher_01", "coder_01", "writer_01"
+    | - role: one of "researcher", "coder", "writer"
+    | - goal: what this subtask should accomplish
+    | - tools: list of tool names (pre-built + custom tool names you define)
+    | - tool_definitions: object mapping custom tool names to their goals (e.g. {"my_tool": "what my_tool does"})
+    | - depends_on: list of agent_ids this subtask depends on (empty list if none)
+    | - output_format: "text" or "json"
+    | 
+    | Goal: test goal
+    ------------------------------------------------------------
+
+--- [2026-06-06T09:51:06.293Z] PLANNER ---
+    Raw response from Gemini:
+    ------------------------------------------------------------
+    | [
+    |   {
+    |     "agent_id": "researcher_01",
+    |     "role": "researcher",
+    |     "goal": "Search for competitor data",
+    |     "tools": ["web_search"],
+    |     "depends_on": [],
+    |     "output_format": "json"
+    |   },
+    |   {
+    |     "agent_id": "writer_01",
+    |     "role": "writer",
+    |     "goal": "Write a summary report",
+    |     "tools": ["file_reader"],
+    |     "depends_on": ["researcher_01"],
+    |     "output_format": "markdown"
+    |   }
+    | ]
+    ------------------------------------------------------------
+
+--- [2026-06-06T09:51:06.293Z] PLANNER ---
+    Parsed 2 subtask(s) from JSON
+
+--- [2026-06-06T09:51:06.293Z] PLANNER ---
+    Final plan (2 subtasks):
+    ------------------------------------------------------------
+    | [researcher_01] role=researcher  goal=Search for competitor data  tools=['web_search']  output_format=json
+    |   [writer_01] role=writer  goal=Write a summary report  tools=['file_reader']  output_format=markdown
+    ------------------------------------------------------------
+
+--- [2026-06-06T09:51:06.302Z] PLANNER ---
+    Calling Gemini to decompose goal
+    model=gemini-3.1-flash-lite
+
+--- [2026-06-06T09:51:06.302Z] PLANNER ---
+    Prompt sent to Gemini:
+    ------------------------------------------------------------
+    | Decompose the following goal into a list of subtasks.
+    | Each subtask must be assigned to one of these agent roles: researcher, coder, writer.
+    | Pre-built tools available: web_search, file_reader, code_executor.
+    | If a subtask requires a capability none of the pre-built tools provide, define a new custom tool 
+    | with a unique name and a clear description of what it should do in tool_definitions.
+    | 
+    | CRITICAL: Your entire response must be ONLY a valid JSON array. No markdown formatting, no code fences, no explanations, no preamble, no postscript. Start with '[' and end with ']'.
+    | 
+    | Each item in the array has:
+    | - agent_id: unique identifier like "researcher_01", "coder_01", "writer_01"
+    | - role: one of "researcher", "coder", "writer"
+    | - goal: what this subtask should accomplish
+    | - tools: list of tool names (pre-built + custom tool names you define)
+    | - tool_definitions: object mapping custom tool names to their goals (e.g. {"my_tool": "what my_tool does"})
+    | - depends_on: list of agent_ids this subtask depends on (empty list if none)
+    | - output_format: "text" or "json"
+    | 
+    | Goal: test
+    ------------------------------------------------------------
+
+--- [2026-06-06T09:51:06.303Z] PLANNER ---
+    Raw response from Gemini:
+    ------------------------------------------------------------
+    | I'll decompose this task into subtasks.
+    ------------------------------------------------------------
+
+--- [2026-06-06T09:51:06.303Z] PLANNER ---
+    Failed to parse Gemini response as JSON
+    response preview: I'll decompose this task into subtasks.
+
+--- [2026-06-06T09:51:06.303Z] PLANNER ---
+    Final plan (0 subtasks):
+    ------------------------------------------------------------
+    | (no subtasks)
+    ------------------------------------------------------------
+
+--- [2026-06-06T09:51:06.326Z] PLANNER ---
+    Calling Gemini to decompose goal
+    model=gemini-3.1-flash-lite
+
+--- [2026-06-06T09:51:06.326Z] PLANNER ---
+    Prompt sent to Gemini:
+    ------------------------------------------------------------
+    | Decompose the following goal into a list of subtasks.
+    | Each subtask must be assigned to one of these agent roles: researcher, coder, writer.
+    | Pre-built tools available: web_search, file_reader, code_executor.
+    | If a subtask requires a capability none of the pre-built tools provide, define a new custom tool 
+    | with a unique name and a clear description of what it should do in tool_definitions.
+    | 
+    | CRITICAL: Your entire response must be ONLY a valid JSON array. No markdown formatting, no code fences, no explanations, no preamble, no postscript. Start with '[' and end with ']'.
+    | 
+    | Each item in the array has:
+    | - agent_id: unique identifier like "researcher_01", "coder_01", "writer_01"
+    | - role: one of "researcher", "coder", "writer"
+    | - goal: what this subtask should accomplish
+    | - tools: list of tool names (pre-built + custom tool names you define)
+    | - tool_definitions: object mapping custom tool names to their goals (e.g. {"my_tool": "what my_tool does"})
+    | - depends_on: list of agent_ids this subtask depends on (empty list if none)
+    | - output_format: "text" or "json"
+    | 
+    | Goal: test
+    ------------------------------------------------------------
+
+--- [2026-06-06T09:51:06.326Z] PLANNER ---
+    Raw response from Gemini:
+    ------------------------------------------------------------
+    | [
+    |   {
+    |     "agent_id": "researcher_01",
+    |     "role": "researcher",
+    |     "goal": "Search for competitor data",
+    |     "tools": ["web_search"],
+    |     "depends_on": [],
+    |     "output_format": "json"
+    |   },
+    |   {
+    |     "agent_id": "writer_01",
+    |     "role": "writer",
+    |     "goal": "Write a summary report",
+    |     "tools": ["file_reader"],
+    |     "depends_on": ["researcher_01"],
+    |     "output_format": "markdown"
+    |   }
+    | ]
+    ------------------------------------------------------------
+
+--- [2026-06-06T09:51:06.326Z] PLANNER ---
+    Parsed 2 subtask(s) from JSON
+
+--- [2026-06-06T09:51:06.327Z] PLANNER ---
+    Final plan (2 subtasks):
+    ------------------------------------------------------------
+    | [researcher_01] role=researcher  goal=Search for competitor data  tools=['web_search']  output_format=json
+    |   [writer_01] role=writer  goal=Write a summary report  tools=['file_reader']  output_format=markdown
+    ------------------------------------------------------------
+
+--- [2026-06-06T09:51:08.825Z] SYNTHESIZER ---
+    Synthesizing 2 output(s): ['researcher_01', 'writer_01']
+
+--- [2026-06-06T09:51:08.825Z] SYNTHESIZER ---
+    Inputs to synthesis:
+    ------------------------------------------------------------
+    | [researcher_01] (21 chars): Found competitor data...
+    |   [writer_01] (14 chars): Report written...
+    ------------------------------------------------------------
+
+--- [2026-06-06T09:51:08.825Z] SYNTHESIZER ---
+    Calling Gemini for LLM synthesis
+
+--- [2026-06-06T09:51:09.351Z] SYNTHESIZER ---
+    LLM synthesis failed, using fallback
+    Error calling model 'gemini-3.1-flash-lite' (INVALID_ARGUMENT): 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'API key not valid. Please pass a valid API key.', 'status': 'INVALID_ARGUMENT', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'generativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass a valid API key.'}]}}
+
+--- [2026-06-06T09:51:09.363Z] SYNTHESIZER ---
+    Synthesizing 1 output(s): ['coder_01']
+
+--- [2026-06-06T09:51:09.363Z] SYNTHESIZER ---
+    Inputs to synthesis:
+    ------------------------------------------------------------
+    | [coder_01] (15 chars): def foo(): pass...
+    ------------------------------------------------------------
+
+--- [2026-06-06T09:51:09.363Z] SYNTHESIZER ---
+    Calling Gemini for LLM synthesis
+
+--- [2026-06-06T09:51:09.797Z] SYNTHESIZER ---
+    LLM synthesis failed, using fallback
+    Error calling model 'gemini-3.1-flash-lite' (INVALID_ARGUMENT): 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'API key not valid. Please pass a valid API key.', 'status': 'INVALID_ARGUMENT', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'generativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass a valid API key.'}]}}
+
+--- [2026-06-06T09:51:09.805Z] SYNTHESIZER ---
+    Synthesizing 1 output(s): ['a']
+
+--- [2026-06-06T09:51:09.805Z] SYNTHESIZER ---
+    Inputs to synthesis:
+    ------------------------------------------------------------
+    | [a] (3 chars): out...
+    ------------------------------------------------------------
+
+--- [2026-06-06T09:51:09.805Z] SYNTHESIZER ---
+    Calling Gemini for LLM synthesis
+
+--- [2026-06-06T09:51:10.082Z] SYNTHESIZER ---
+    LLM synthesis failed, using fallback
+    Error calling model 'gemini-3.1-flash-lite' (INVALID_ARGUMENT): 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'API key not valid. Please pass a valid API key.', 'status': 'INVALID_ARGUMENT', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'generativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass a valid API key.'}]}}
+
+--- [2026-06-06T09:51:10.094Z] SYNTHESIZER ---
+    Synthesizing 1 output(s): ['a']
+
+--- [2026-06-06T09:51:10.095Z] SYNTHESIZER ---
+    Inputs to synthesis:
+    ------------------------------------------------------------
+    | [a] (3 chars): out...
+    ------------------------------------------------------------
+
+--- [2026-06-06T09:51:10.095Z] SYNTHESIZER ---
+    Calling Gemini for LLM synthesis
+
+--- [2026-06-06T09:51:10.612Z] SYNTHESIZER ---
+    LLM synthesis failed, using fallback
+    Error calling model 'gemini-3.1-flash-lite' (INVALID_ARGUMENT): 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'API key not valid. Please pass a valid API key.', 'status': 'INVALID_ARGUMENT', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'generativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass a valid API key.'}]}}
+
+--- [2026-06-06T09:51:10.624Z] SYNTHESIZER ---
+    No subtask outputs to synthesize — returning empty
+
