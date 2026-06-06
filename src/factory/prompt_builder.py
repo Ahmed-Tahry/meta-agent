@@ -40,7 +40,17 @@ class PromptBuilder:
         ]
 
         response = await self._get_llm().ainvoke(messages)
-        content = response.content if isinstance(response.content, str) else str(response.content)
+        if isinstance(response.content, str):
+            content = response.content
+        elif isinstance(response.content, list):
+            content = "\n".join(
+                block.get("text", "") if isinstance(block, dict)
+                else block.text if hasattr(block, "text")
+                else str(block)
+                for block in response.content
+            ).strip()
+        else:
+            content = str(response.content)
         content = content.strip()
         if not content:
             return self._fallback_prompt(spec, base_prompt)

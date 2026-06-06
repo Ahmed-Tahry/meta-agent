@@ -4,9 +4,6 @@ from unittest.mock import AsyncMock, patch, MagicMock, PropertyMock
 from langchain_core.messages import HumanMessage
 
 from src.agents.base import Agent
-from src.agents.researcher import ResearcherAgent
-from src.agents.coder import CoderAgent
-from src.agents.writer import WriterAgent
 from src.tools import Tool
 
 
@@ -76,16 +73,13 @@ class TestAgent:
         assert a._llm is llm
 
 
-class TestResearcherAgent:
-    def test_is_agent_subclass(self):
-        assert issubclass(ResearcherAgent, Agent)
+class TestAgentSubclasses:
+    def test_agent_is_used_for_any_role(self):
+        from src.factory.agent_factory import AgentFactory
+        from src.types.agent_spec import AgentSpec
 
-
-class TestCoderAgent:
-    def test_is_agent_subclass(self):
-        assert issubclass(CoderAgent, Agent)
-
-
-class TestWriterAgent:
-    def test_is_agent_subclass(self):
-        assert issubclass(WriterAgent, Agent)
+        factory = AgentFactory()
+        for role in ["researcher", "coder", "writer", "data_analyzer", "reviewer"]:
+            spec = AgentSpec(agent_id=f"{role}_01", role=role, goal="test")
+            agent = factory._resolve_agent_cls(role)
+            assert agent is Agent

@@ -1,10 +1,8 @@
 import os
 import pytest
 
-from src.agents.researcher import ResearcherAgent
-from src.agents.coder import CoderAgent
-from src.agents.writer import WriterAgent
-from src.factory.agent_factory import load_agent_configs
+from src.agents.base import Agent
+from src.factory.agent_factory import AgentFactory
 from src.tools import tool_registry
 
 REAL_API_KEY_SET = (
@@ -20,33 +18,21 @@ pytestmark = pytest.mark.skipif(
 
 @pytest.fixture
 def configs():
+    from src.factory.agent_factory import load_agent_configs
     return load_agent_configs()
 
 
 @pytest.fixture
-def researcher_tools():
-    config = load_agent_configs().get("researcher", {})
-    return tool_registry.get_multiple(config.get("tools", []))
+def agent_factory():
+    return AgentFactory()
 
 
-@pytest.fixture
-def coder_tools():
-    config = load_agent_configs().get("coder", {})
-    return tool_registry.get_multiple(config.get("tools", []))
-
-
-@pytest.fixture
-def writer_tools():
-    config = load_agent_configs().get("writer", {})
-    return tool_registry.get_multiple(config.get("tools", []))
-
-
-class TestResearcherAgentIntegration:
+class TestAgentIntegration:
     @pytest.mark.asyncio
-    async def test_researcher_returns_research_output(self, configs):
-        prompt = configs["researcher"]["system_prompt"]
-        tools = tool_registry.get_multiple(configs["researcher"]["tools"])
-        agent = ResearcherAgent(
+    async def test_agent_returns_output(self, agent_factory, configs):
+        prompt = configs.get("researcher", {}).get("system_prompt", "You are a researcher.")
+        tools = tool_registry.get_multiple(["web_search"])
+        agent = Agent(
             agent_id="researcher_01",
             system_prompt=prompt,
             tools=tools,
@@ -64,10 +50,10 @@ class TestResearcherAgentIntegration:
         assert any(word in result.lower() for word in ["energy", "solar", "renewable", "wind", "power"])
 
     @pytest.mark.asyncio
-    async def test_researcher_appends_to_message_history(self, configs):
-        prompt = configs["researcher"]["system_prompt"]
-        tools = tool_registry.get_multiple(configs["researcher"]["tools"])
-        agent = ResearcherAgent(
+    async def test_agent_appends_to_message_history(self, agent_factory, configs):
+        prompt = configs.get("researcher", {}).get("system_prompt", "You are a researcher.")
+        tools = tool_registry.get_multiple(["web_search"])
+        agent = Agent(
             agent_id="researcher_02",
             system_prompt=prompt,
             tools=tools,
@@ -82,13 +68,11 @@ class TestResearcherAgentIntegration:
         assert len(agent.messages) == 2
         assert "climate change" in agent.messages[0].content.lower()
 
-
-class TestCoderAgentIntegration:
     @pytest.mark.asyncio
-    async def test_coder_returns_code_output(self, configs):
-        prompt = configs["coder"]["system_prompt"]
-        tools = tool_registry.get_multiple(configs["coder"]["tools"])
-        agent = CoderAgent(
+    async def test_coder_returns_code_output(self, agent_factory, configs):
+        prompt = configs.get("coder", {}).get("system_prompt", "You are a coder.")
+        tools = tool_registry.get_multiple(["code_executor"])
+        agent = Agent(
             agent_id="coder_01",
             system_prompt=prompt,
             tools=tools,
@@ -106,8 +90,8 @@ class TestCoderAgentIntegration:
         assert "def " in result or "calculate_average" in result or "average" in result.lower()
 
     @pytest.mark.asyncio
-    async def test_coder_handles_empty_tools(self):
-        agent = CoderAgent(
+    async def test_agent_handles_empty_tools(self):
+        agent = Agent(
             agent_id="coder_no_tools",
             system_prompt="You are a helpful coding assistant.",
             tools=[],
@@ -122,13 +106,11 @@ class TestCoderAgentIntegration:
         assert isinstance(result, str)
         assert len(result) > 10
 
-
-class TestWriterAgentIntegration:
     @pytest.mark.asyncio
     async def test_writer_returns_written_output(self, configs):
-        prompt = configs["writer"]["system_prompt"]
-        tools = tool_registry.get_multiple(configs["writer"]["tools"])
-        agent = WriterAgent(
+        prompt = configs.get("writer", {}).get("system_prompt", "You are a writer.")
+        tools = tool_registry.get_multiple(["web_search"])
+        agent = Agent(
             agent_id="writer_01",
             system_prompt=prompt,
             tools=tools,
@@ -146,10 +128,10 @@ class TestWriterAgentIntegration:
         assert any(word in result.lower() for word in ["exercise", "health", "mental", "physical"])
 
     @pytest.mark.asyncio
-    async def test_writer_with_shared_state(self, configs):
-        prompt = configs["writer"]["system_prompt"]
-        tools = tool_registry.get_multiple(configs["writer"]["tools"])
-        agent = WriterAgent(
+    async def test_agent_with_shared_state(self, configs):
+        prompt = configs.get("writer", {}).get("system_prompt", "You are a writer.")
+        tools = tool_registry.get_multiple(["web_search"])
+        agent = Agent(
             agent_id="writer_02",
             system_prompt=prompt,
             tools=tools,

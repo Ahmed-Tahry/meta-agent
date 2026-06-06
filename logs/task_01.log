@@ -3,11 +3,11 @@ PIPELINE START  |  task_id=task_01
 GOAL            |  
 ======================================================================
 
---- [2026-06-06T11:36:08.643Z] PLANNER ---
+--- [2026-06-06T16:17:18.730Z] PLANNER ---
     Calling Gemini to decompose goal
     model=gemini-3.1-flash-lite
 
---- [2026-06-06T11:36:08.643Z] PLANNER ---
+--- [2026-06-06T16:17:18.730Z] PLANNER ---
     Prompt sent to Gemini:
     ------------------------------------------------------------
     | Decompose the following goal into a list of subtasks.
@@ -30,7 +30,7 @@ GOAL            |
     | Goal: Research competitors
     ------------------------------------------------------------
 
---- [2026-06-06T11:36:08.644Z] PLANNER ---
+--- [2026-06-06T16:17:18.731Z] PLANNER ---
     Raw response from Gemini:
     ------------------------------------------------------------
     | [
@@ -53,21 +53,21 @@ GOAL            |
     | ]
     ------------------------------------------------------------
 
---- [2026-06-06T11:36:08.644Z] PLANNER ---
+--- [2026-06-06T16:17:18.731Z] PLANNER ---
     Parsed 2 subtask(s) from JSON
 
---- [2026-06-06T11:36:08.644Z] PLANNER ---
+--- [2026-06-06T16:17:18.732Z] PLANNER ---
     Final plan (2 subtasks):
     ------------------------------------------------------------
     | [researcher_01] role=researcher  goal=Search for competitor data  tools=['web_search']  output_format=json
     |   [writer_01] role=writer  goal=Write a summary report  tools=['file_reader']  output_format=markdown
     ------------------------------------------------------------
 
---- [2026-06-06T11:36:08.649Z] PLANNER ---
+--- [2026-06-06T16:17:18.740Z] PLANNER ---
     Calling Gemini to decompose goal
     model=gemini-3.1-flash-lite
 
---- [2026-06-06T11:36:08.649Z] PLANNER ---
+--- [2026-06-06T16:17:18.740Z] PLANNER ---
     Prompt sent to Gemini:
     ------------------------------------------------------------
     | Decompose the following goal into a list of subtasks.
@@ -90,7 +90,7 @@ GOAL            |
     | Goal: test goal
     ------------------------------------------------------------
 
---- [2026-06-06T11:36:08.649Z] PLANNER ---
+--- [2026-06-06T16:17:18.740Z] PLANNER ---
     Raw response from Gemini:
     ------------------------------------------------------------
     | [
@@ -113,21 +113,21 @@ GOAL            |
     | ]
     ------------------------------------------------------------
 
---- [2026-06-06T11:36:08.650Z] PLANNER ---
+--- [2026-06-06T16:17:18.741Z] PLANNER ---
     Parsed 2 subtask(s) from JSON
 
---- [2026-06-06T11:36:08.650Z] PLANNER ---
+--- [2026-06-06T16:17:18.741Z] PLANNER ---
     Final plan (2 subtasks):
     ------------------------------------------------------------
     | [researcher_01] role=researcher  goal=Search for competitor data  tools=['web_search']  output_format=json
     |   [writer_01] role=writer  goal=Write a summary report  tools=['file_reader']  output_format=markdown
     ------------------------------------------------------------
 
---- [2026-06-06T11:36:08.655Z] PLANNER ---
+--- [2026-06-06T16:17:18.747Z] PLANNER ---
     Calling Gemini to decompose goal
     model=gemini-3.1-flash-lite
 
---- [2026-06-06T11:36:08.655Z] PLANNER ---
+--- [2026-06-06T16:17:18.747Z] PLANNER ---
     Prompt sent to Gemini:
     ------------------------------------------------------------
     | Decompose the following goal into a list of subtasks.
@@ -150,27 +150,27 @@ GOAL            |
     | Goal: test
     ------------------------------------------------------------
 
---- [2026-06-06T11:36:08.655Z] PLANNER ---
+--- [2026-06-06T16:17:18.748Z] PLANNER ---
     Raw response from Gemini:
     ------------------------------------------------------------
     | I'll decompose this task into subtasks.
     ------------------------------------------------------------
 
---- [2026-06-06T11:36:08.655Z] PLANNER ---
+--- [2026-06-06T16:17:18.748Z] PLANNER ---
     Failed to parse Gemini response as JSON
     response preview: I'll decompose this task into subtasks.
 
---- [2026-06-06T11:36:08.656Z] PLANNER ---
+--- [2026-06-06T16:17:18.748Z] PLANNER ---
     Final plan (0 subtasks):
     ------------------------------------------------------------
     | (no subtasks)
     ------------------------------------------------------------
 
---- [2026-06-06T11:36:08.669Z] PLANNER ---
+--- [2026-06-06T16:17:18.774Z] PLANNER ---
     Calling Gemini to decompose goal
     model=gemini-3.1-flash-lite
 
---- [2026-06-06T11:36:08.669Z] PLANNER ---
+--- [2026-06-06T16:17:18.774Z] PLANNER ---
     Prompt sent to Gemini:
     ------------------------------------------------------------
     | Decompose the following goal into a list of subtasks.
@@ -193,7 +193,7 @@ GOAL            |
     | Goal: test
     ------------------------------------------------------------
 
---- [2026-06-06T11:36:08.669Z] PLANNER ---
+--- [2026-06-06T16:17:18.775Z] PLANNER ---
     Raw response from Gemini:
     ------------------------------------------------------------
     | [
@@ -216,81 +216,81 @@ GOAL            |
     | ]
     ------------------------------------------------------------
 
---- [2026-06-06T11:36:08.669Z] PLANNER ---
+--- [2026-06-06T16:17:18.775Z] PLANNER ---
     Parsed 2 subtask(s) from JSON
 
---- [2026-06-06T11:36:08.669Z] PLANNER ---
+--- [2026-06-06T16:17:18.775Z] PLANNER ---
     Final plan (2 subtasks):
     ------------------------------------------------------------
     | [researcher_01] role=researcher  goal=Search for competitor data  tools=['web_search']  output_format=json
     |   [writer_01] role=writer  goal=Write a summary report  tools=['file_reader']  output_format=markdown
     ------------------------------------------------------------
 
---- [2026-06-06T11:36:11.316Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:20.814Z] SYNTHESIZER ---
     Synthesizing 2 output(s): ['researcher_01', 'writer_01']
 
---- [2026-06-06T11:36:11.316Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:20.814Z] SYNTHESIZER ---
     Inputs to synthesis:
     ------------------------------------------------------------
     | [researcher_01] (21 chars): Found competitor data...
     |   [writer_01] (14 chars): Report written...
     ------------------------------------------------------------
 
---- [2026-06-06T11:36:11.316Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:20.814Z] SYNTHESIZER ---
     Calling Gemini for LLM synthesis
 
---- [2026-06-06T11:36:11.920Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:21.138Z] SYNTHESIZER ---
     LLM synthesis failed, using fallback
     Error calling model 'gemini-3.1-flash-lite' (INVALID_ARGUMENT): 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'API key not valid. Please pass a valid API key.', 'status': 'INVALID_ARGUMENT', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'generativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass a valid API key.'}]}}
 
---- [2026-06-06T11:36:11.926Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:21.149Z] SYNTHESIZER ---
     Synthesizing 1 output(s): ['coder_01']
 
---- [2026-06-06T11:36:11.926Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:21.149Z] SYNTHESIZER ---
     Inputs to synthesis:
     ------------------------------------------------------------
     | [coder_01] (15 chars): def foo(): pass...
     ------------------------------------------------------------
 
---- [2026-06-06T11:36:11.926Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:21.149Z] SYNTHESIZER ---
     Calling Gemini for LLM synthesis
 
---- [2026-06-06T11:36:12.282Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:21.631Z] SYNTHESIZER ---
     LLM synthesis failed, using fallback
     Error calling model 'gemini-3.1-flash-lite' (INVALID_ARGUMENT): 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'API key not valid. Please pass a valid API key.', 'status': 'INVALID_ARGUMENT', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'generativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass a valid API key.'}]}}
 
---- [2026-06-06T11:36:12.286Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:21.639Z] SYNTHESIZER ---
     Synthesizing 1 output(s): ['a']
 
---- [2026-06-06T11:36:12.286Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:21.639Z] SYNTHESIZER ---
     Inputs to synthesis:
     ------------------------------------------------------------
     | [a] (3 chars): out...
     ------------------------------------------------------------
 
---- [2026-06-06T11:36:12.286Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:21.639Z] SYNTHESIZER ---
     Calling Gemini for LLM synthesis
 
---- [2026-06-06T11:36:12.684Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:21.957Z] SYNTHESIZER ---
     LLM synthesis failed, using fallback
     Error calling model 'gemini-3.1-flash-lite' (INVALID_ARGUMENT): 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'API key not valid. Please pass a valid API key.', 'status': 'INVALID_ARGUMENT', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'generativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass a valid API key.'}]}}
 
---- [2026-06-06T11:36:12.697Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:21.970Z] SYNTHESIZER ---
     Synthesizing 1 output(s): ['a']
 
---- [2026-06-06T11:36:12.697Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:21.970Z] SYNTHESIZER ---
     Inputs to synthesis:
     ------------------------------------------------------------
     | [a] (3 chars): out...
     ------------------------------------------------------------
 
---- [2026-06-06T11:36:12.698Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:21.970Z] SYNTHESIZER ---
     Calling Gemini for LLM synthesis
 
---- [2026-06-06T11:36:13.258Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:22.356Z] SYNTHESIZER ---
     LLM synthesis failed, using fallback
     Error calling model 'gemini-3.1-flash-lite' (INVALID_ARGUMENT): 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'API key not valid. Please pass a valid API key.', 'status': 'INVALID_ARGUMENT', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'generativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass a valid API key.'}]}}
 
---- [2026-06-06T11:36:13.268Z] SYNTHESIZER ---
+--- [2026-06-06T16:17:22.369Z] SYNTHESIZER ---
     No subtask outputs to synthesize — returning empty
 

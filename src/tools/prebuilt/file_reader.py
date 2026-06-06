@@ -1,12 +1,15 @@
+from pathlib import Path
+
 from src.tools import Tool
 
 
 async def file_reader(path: str) -> str:
-    return (
-        f"File: {path}\n"
-        f"Content: [File reading is not available in development mode. "
-        f"The file at {path} would be read and returned in production.]"
-    )
+    p = Path(path).resolve()
+    if not p.exists():
+        return f"File not found: {path}"
+    if not p.is_file():
+        return f"Not a file: {path}"
+    return p.read_text(encoding="utf-8")
 
 
 tool_file_reader = Tool(
