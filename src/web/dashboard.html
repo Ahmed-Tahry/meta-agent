@@ -4,12 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>meta-agent dashboard</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     background: #0d1117;
     color: #e6edf3;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 1.5;
     padding: 24px;
@@ -17,350 +18,323 @@
   }
   .container { max-width: 900px; margin: 0 auto; }
 
-  /* header */
-  .header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 20px; padding-bottom: 16px;
-    border-bottom: 1px solid #21262d;
-  }
-  .header h1 {
-    font-size: 20px; font-weight: 600; letter-spacing: -0.3px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .header h1 .logo { color: #58a6ff; font-size: 22px; }
-  .task-info { display: flex; align-items: center; gap: 12px; font-size: 13px; color: #8b949e; }
-  .task-id { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; color: #e6edf3; }
-  .status-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500;
-  }
-  .status-idle { background: #21262d; color: #8b949e; }
-  .status-running { background: #1f3a1f; color: #3fb950; }
-  .status-done { background: #1f3a1f; color: #3fb950; }
-  .status-failed { background: #3d1f1f; color: #f85149; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-  .dot-running { background: #3fb950; animation: pulse 1.2s ease-in-out infinite; }
-  .dot-done { background: #3fb950; }
-  .dot-failed { background: #f85149; }
-  .dot-idle { background: #484f58; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  /* top bar */
+  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+  .brand { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 500; }
+  .brand-dot { width: 10px; height: 10px; border-radius: 50%; background: #484f58; }
+  .brand-dot.running { background: #22c55e; animation: blink 1.2s infinite; }
+  .brand-dot.done    { background: #22c55e; }
+  .brand-dot.failed  { background: #ef4444; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .task-pill { font-size: 12px; color: #8b949e; font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; }
 
   /* input */
-  .input-bar {
-    display: flex; gap: 8px; margin-bottom: 24px;
+  .input-wrap {
+    margin-bottom: 1.5rem;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    background: #161b22;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 8px 8px 8px 12px;
+    transition: border-color 0.15s;
   }
-  .input-bar input {
-    flex: 1; padding: 10px 14px; border-radius: 6px; border: 1px solid #30363d;
-    background: #161b22; color: #e6edf3; font-size: 14px; outline: none; transition: border-color 0.15s;
+  .input-wrap:focus-within { border-color: #58a6ff; }
+  .input-wrap textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: inherit;
+    font-size: 14px;
+    color: #e6edf3;
+    line-height: 1.5;
+    min-height: 22px;
+    max-height: 120px;
+    overflow-y: auto;
+    padding: 0;
   }
-  .input-bar input:focus { border-color: #58a6ff; }
-  .input-bar input::placeholder { color: #484f58; }
-  .input-bar button {
-    padding: 10px 20px; border-radius: 6px; border: none;
-    background: #238636; color: #fff; font-size: 14px; font-weight: 500;
-    cursor: pointer; transition: background 0.15s; white-space: nowrap;
+  .input-wrap textarea::placeholder { color: #484f58; }
+  .run-btn {
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: 1px solid #30363d;
+    background: transparent;
+    color: #e6edf3;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
-  .input-bar button:hover { background: #2ea043; }
-  .input-bar button:disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
+  .run-btn:hover { background: #21262d; }
+  .run-btn:disabled { color: #484f58; cursor: not-allowed; }
 
-  /* panels */
-  .panels { display: flex; flex-direction: column; gap: 16px; }
-
-  .panel {
-    background: #161b22; border: 1px solid #21262d; border-radius: 8px; overflow: hidden;
+  /* pipeline */
+  .pipeline {
+    display: flex;
+    margin-bottom: 1.5rem;
+    background: #161b22;
+    border: 1px solid #21262d;
+    border-radius: 8px;
+    overflow: hidden;
   }
-  .panel-header {
+  .pipe-step { flex: 1; padding: 10px 8px; text-align: center; border-right: 1px solid #21262d; transition: background 0.2s; }
+  .pipe-step:last-child { border-right: none; }
+  .pipe-step .ps-label { font-size: 11px; color: #484f58; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .pipe-step .ps-icon { font-size: 18px; color: #484f58; }
+  .pipe-step.ps-running { background: #161b22; }
+  .pipe-step.ps-running .ps-icon  { color: #58a6ff; animation: blink 1s infinite; }
+  .pipe-step.ps-running .ps-label { color: #58a6ff; }
+  .pipe-step.ps-done .ps-icon  { color: #3fb950; }
+  .pipe-step.ps-done .ps-label { color: #3fb950; }
+  .pipe-step.ps-failed .ps-icon  { color: #f85149; }
+  .pipe-step.ps-failed .ps-label { color: #f85149; }
+
+  /* body grid */
+  .body-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 260px); gap: 12px; margin-bottom: 12px; }
+
+  .panel { background: #161b22; border: 1px solid #21262d; border-radius: 8px; overflow: hidden; }
+  .panel-head {
+    padding: 10px 14px;
+    border-bottom: 1px solid #21262d;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 14px; border-bottom: 1px solid #21262d;
-    font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #8b949e;
   }
-  .panel-body { padding: 8px; }
+  .panel-head-label { font-size: 12px; font-weight: 500; color: #8b949e; text-transform: uppercase; letter-spacing: 0.4px; }
+  .panel-body { padding: 10px; }
 
-  /* steps */
-  .step { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 4px; font-size: 13px; }
-  .step + .step { border-top: 1px solid #21262d; }
-  .step-icon { width: 18px; text-align: center; font-size: 12px; flex-shrink: 0; }
-  .step-name { font-weight: 500; min-width: 90px; }
-  .step-status { color: #8b949e; font-size: 12px; margin-left: auto; }
-  .step-waiting { color: #484f58; }
-  .step-running { color: #e6edf3; }
-  .step-done { color: #3fb950; }
-  .step-failed { color: #f85149; }
+  .empty { padding: 32px 16px; text-align: center; color: #484f58; font-size: 13px; }
+  .empty i { font-size: 24px; display: block; margin-bottom: 8px; }
 
   /* agents */
-  .agent-card {
-    padding: 10px; border-radius: 6px; margin: 4px;
-    border: 1px solid #21262d; transition: border-color 0.2s;
+  .agent-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 8px; border-radius: 4px; }
+  .agent-row + .agent-row { border-top: 1px solid #21262d; }
+  .agent-icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+    background: #21262d; color: #8b949e; border: 1px solid #30363d;
   }
-  .agent-card.pending { opacity: 0.5; }
-  .agent-card.running { border-color: #1f6feb; }
-  .agent-card.done { border-color: #238636; }
-  .agent-card.failed { border-color: #da3633; }
-  .agent-header {
-    display: flex; align-items: center; gap: 10px;
-  }
-  .agent-role {
-    font-size: 11px; color: #8b949e; background: #21262d;
-    padding: 1px 7px; border-radius: 8px; font-weight: 500;
-  }
-  .agent-name { font-weight: 600; font-size: 14px; }
-  .agent-status-text { font-size: 12px; margin-left: auto; }
-  .agent-depends { font-size: 11px; color: #484f58; margin-top: 4px; margin-left: 28px; }
-
-  /* tools within agent */
-  .agent-tools { margin-top: 6px; margin-left: 28px; display: flex; flex-wrap: wrap; gap: 4px; }
+  .agent-icon.running { background: #0d2d4a; color: #58a6ff; border-color: #1f6feb; }
+  .agent-icon.done    { background: #0d3320; color: #3fb950; border-color: #238636; }
+  .agent-icon.failed  { background: #3d1f1f; color: #f85149; border-color: #da3633; }
+  .agent-meta { flex: 1; min-width: 0; }
+  .agent-name-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .agent-name { font-size: 13px; font-weight: 500; }
+  .agent-role-badge { font-size: 11px; color: #8b949e; background: #21262d; padding: 1px 7px; border-radius: 8px; }
+  .agent-status-text { font-size: 12px; color: #484f58; }
+  .agent-tools-wrap { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
   .tool-chip {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 1px 8px; border-radius: 4px; font-size: 11px;
+    font-size: 11px; padding: 1px 8px; border-radius: 4px;
     background: #21262d; color: #8b949e;
+    display: flex; align-items: center; gap: 3px;
   }
-  .tool-chip.called { background: #0d5320; color: #3fb950; }
+  .tool-chip.called  { background: #0d3320; color: #3fb950; }
   .tool-chip.errored { background: #3d1f1f; color: #f85149; }
 
   /* events */
-  .event-list { max-height: 200px; overflow-y: auto; }
-  .event-entry {
-    display: flex; align-items: flex-start; gap: 8px;
-    padding: 4px 8px; font-size: 12px; font-family: 'SFMono-Regular', Consolas, monospace;
-    color: #8b949e;
-  }
-  .event-entry + .event-entry { border-top: 1px solid #21262d; }
-  .event-time { color: #484f58; white-space: nowrap; flex-shrink: 0; }
-  .event-msg { word-break: break-word; }
-  .event-msg .highlight { color: #e6edf3; }
-  .event-msg .good { color: #3fb950; }
-  .event-msg .bad { color: #f85149; }
-  .event-msg .info { color: #58a6ff; }
+  .event-list { max-height: 220px; overflow-y: auto; }
+  .evt { display: flex; gap: 8px; padding: 5px 8px; font-size: 12px; font-family: 'SFMono-Regular', Consolas, monospace; color: #8b949e; }
+  .evt + .evt { border-top: 1px solid #21262d; }
+  .evt-time { color: #484f58; flex-shrink: 0; }
+  .evt-msg { word-break: break-word; }
+  .c-info { color: #58a6ff; }
+  .c-good { color: #3fb950; }
+  .c-bad  { color: #f85149; }
+  .c-hi   { color: #e6edf3; }
 
   /* result */
-  .result-box {
-    padding: 14px; line-height: 1.7; font-size: 14px;
-    white-space: pre-wrap; word-break: break-word;
-  }
-  .result-box h1, .result-box h2, .result-box h3 { color: #e6edf3; margin: 12px 0 6px; }
-  .result-box h1 { font-size: 18px; }
-  .result-box h2 { font-size: 16px; }
-  .result-box h3 { font-size: 14px; }
-  .result-box p { margin: 6px 0; }
-  .result-box code {
-    background: #21262d; padding: 1px 5px; border-radius: 3px; font-size: 13px; color: #f0c674;
-  }
-  .result-box pre {
-    background: #0d1117; padding: 12px; border-radius: 6px; overflow-x: auto; margin: 8px 0;
-    border: 1px solid #21262d;
-  }
-  .result-box pre code { background: none; padding: 0; }
-  .result-box ul, .result-box ol { padding-left: 20px; margin: 6px 0; }
-
-  /* empty state */
-  .empty-state {
-    text-align: center; padding: 40px 20px; color: #484f58; font-size: 14px;
-  }
-  .empty-state .icon { font-size: 32px; margin-bottom: 8px; }
-
-  .hidden { display: none; }
+  .result-panel { background: #161b22; border: 1px solid #238636; border-radius: 8px; overflow: hidden; display: none; }
+  .result-head { padding: 10px 14px; border-bottom: 1px solid #21262d; display: flex; align-items: center; gap: 8px; }
+  .result-head i { color: #3fb950; font-size: 16px; }
+  .result-head-label { font-size: 12px; font-weight: 500; color: #3fb950; text-transform: uppercase; letter-spacing: 0.4px; }
+  .result-body { padding: 16px; font-size: 14px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
 </style>
 </head>
 <body>
 <div class="container">
-  <div class="header">
-    <h1><span class="logo">◉</span> meta-agent dashboard</h1>
-    <div class="task-info">
-      <span class="task-id" id="taskId">—</span>
-      <span class="status-badge status-idle" id="statusBadge">
-        <span class="dot dot-idle"></span> idle
-      </span>
+
+  <div class="top-bar">
+    <div class="brand">
+      <div class="brand-dot" id="brandDot"></div>
+      meta-agent
+    </div>
+    <div class="task-pill" id="taskPill">no active task</div>
+  </div>
+
+  <div class="input-wrap" id="inputWrap">
+    <textarea id="goalInput" rows="1" placeholder="Enter a goal…"></textarea>
+    <button class="run-btn" id="runBtn" onclick="run()">
+      <i class="ti ti-player-play"></i> run
+    </button>
+  </div>
+
+  <div class="pipeline">
+    <div class="pipe-step" id="ps-planner">
+      <div class="ps-label">planner</div>
+      <i class="ti ti-list-tree ps-icon"></i>
+    </div>
+    <div class="pipe-step" id="ps-spawner">
+      <div class="ps-label">spawner</div>
+      <i class="ti ti-sitemap ps-icon"></i>
+    </div>
+    <div class="pipe-step" id="ps-executor">
+      <div class="ps-label">executor</div>
+      <i class="ti ti-bolt ps-icon"></i>
+    </div>
+    <div class="pipe-step" id="ps-evaluator">
+      <div class="ps-label">evaluator</div>
+      <i class="ti ti-checkup-list ps-icon"></i>
+    </div>
+    <div class="pipe-step" id="ps-synthesizer">
+      <div class="ps-label">synthesizer</div>
+      <i class="ti ti-wand ps-icon"></i>
     </div>
   </div>
 
-  <div class="input-bar">
-    <input type="text" id="goalInput" placeholder="Enter a goal for the meta-agent..." autofocus>
-    <button id="runBtn" onclick="run()">▶ run</button>
-  </div>
-
-  <div class="panels">
-
-    <!-- Steps -->
+  <div class="body-grid">
     <div class="panel">
-      <div class="panel-header">steps</div>
-      <div class="panel-body" id="stepsPanel">
-        <div class="step" id="step-planner"><span class="step-icon">○</span><span class="step-name">planner</span><span class="step-status step-waiting" id="step-planner-status">waiting</span></div>
-        <div class="step" id="step-spawner"><span class="step-icon">○</span><span class="step-name">spawner</span><span class="step-status step-waiting" id="step-spawner-status">waiting</span></div>
-        <div class="step" id="step-executor"><span class="step-icon">○</span><span class="step-name">executor</span><span class="step-status step-waiting" id="step-executor-status">waiting</span></div>
-        <div class="step" id="step-evaluator"><span class="step-icon">○</span><span class="step-name">evaluator</span><span class="step-status step-waiting" id="step-evaluator-status">waiting</span></div>
-        <div class="step" id="step-synthesizer"><span class="step-icon">○</span><span class="step-name">synthesizer</span><span class="step-status step-waiting" id="step-synthesizer-status">waiting</span></div>
+      <div class="panel-head">
+        <span class="panel-head-label">agents</span>
+        <span id="agentCount" style="font-size:12px;color:#484f58;">0</span>
       </div>
-    </div>
-
-    <!-- Agents -->
-    <div class="panel">
-      <div class="panel-header">agents</div>
-      <div class="panel-body" id="agentsPanel">
-        <div class="empty-state" id="agentsEmpty">
-          <div class="icon">◈</div>
-          <div>agents will appear here as they are created</div>
+      <div class="panel-body" id="agentsBody">
+        <div class="empty" id="agentsEmpty">
+          <i class="ti ti-circles-relation"></i>
+          agents will appear as they are created
         </div>
       </div>
     </div>
 
-    <!-- Events -->
     <div class="panel">
-      <div class="panel-header">events</div>
+      <div class="panel-head">
+        <span class="panel-head-label">events</span>
+      </div>
       <div class="panel-body event-list" id="eventsList">
-        <div class="empty-state" id="eventsEmpty" style="padding: 16px;">
-          <div>waiting for task...</div>
+        <div class="empty" style="padding:24px 8px;" id="eventsEmpty">
+          <i class="ti ti-activity"></i>
+          waiting…
         </div>
       </div>
     </div>
-
-    <!-- Result -->
-    <div class="panel hidden" id="resultPanel">
-      <div class="panel-header">result</div>
-      <div class="panel-body result-box" id="resultContent"></div>
-    </div>
-
   </div>
+
+  <div class="result-panel" id="resultPanel">
+    <div class="result-head">
+      <i class="ti ti-circle-check"></i>
+      <span class="result-head-label">result</span>
+    </div>
+    <div class="result-body" id="resultBody"></div>
+  </div>
+
 </div>
-
 <script>
-let currentTaskId = null;
-let source = null;
-let agentMap = {};
+const textarea = document.getElementById('goalInput');
 
-function timestamp() {
-  const d = new Date();
-  return d.toLocaleTimeString('en-US', { hour12: false });
+function autoResize() {
+  textarea.style.height = 'auto';
+  textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
 }
+textarea.addEventListener('input', autoResize);
+textarea.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(); }
+});
+
+let src = null, agentMap = {}, agentCount = 0;
+const ts = () => new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
 function addEvent(msg, cls = '') {
-  const el = document.getElementById('eventsList');
-  const empty = document.getElementById('eventsEmpty');
-  if (empty) empty.remove();
-
-  const entry = document.createElement('div');
-  entry.className = 'event-entry';
-  entry.innerHTML = `<span class="event-time">${timestamp()}</span><span class="event-msg">${cls ? `<span class="${cls}">` : ''}${msg}${cls ? '</span>' : ''}</span>`;
-  el.appendChild(entry);
-  el.scrollTop = el.scrollHeight;
+  const list = document.getElementById('eventsList');
+  document.getElementById('eventsEmpty')?.remove();
+  const e = document.createElement('div');
+  e.className = 'evt';
+  e.innerHTML = `<span class="evt-time">${ts()}</span><span class="evt-msg">${cls ? `<span class="${cls}">` : ''}${msg}${cls ? '</span>' : ''}</span>`;
+  list.appendChild(e);
+  list.scrollTop = list.scrollHeight;
 }
 
-function setStatus(state) {
-  const badge = document.getElementById('statusBadge');
-  const dot = badge.querySelector('.dot');
-  badge.className = 'status-badge';
-  dot.className = 'dot';
-  if (state === 'running') {
-    badge.classList.add('status-running');
-    dot.classList.add('dot-running');
-    badge.innerHTML = '<span class="dot dot-running"></span> running';
-  } else if (state === 'done') {
-    badge.classList.add('status-done');
-    dot.classList.add('dot-done');
-    badge.innerHTML = '<span class="dot dot-done"></span> done';
-  } else if (state === 'failed') {
-    badge.classList.add('status-failed');
-    dot.classList.add('dot-failed');
-    badge.innerHTML = '<span class="dot dot-failed"></span> failed';
-  } else {
-    badge.classList.add('status-idle');
-    dot.classList.add('dot-idle');
-    badge.innerHTML = '<span class="dot dot-idle"></span> idle';
-  }
+function setDot(state) {
+  document.getElementById('brandDot').className = 'brand-dot' + (state ? ' ' + state : '');
 }
 
-function setStep(node, status, detail = '') {
-  const el = document.getElementById(`step-${node}`);
-  if (!el) return;
-  const icon = el.querySelector('.step-icon');
-  const statusEl = el.querySelector('.step-status');
-  icon.textContent = status === 'running' ? '●' : status === 'done' ? '✓' : status === 'failed' ? '✗' : '○';
-  el.className = `step step-${status}`;
-  statusEl.className = `step-status step-${status}`;
-  statusEl.textContent = detail || status;
+function setPipeStep(name, state) {
+  const el = document.getElementById('ps-' + name);
+  if (el) el.className = 'pipe-step' + (state ? ' ps-' + state : '');
 }
 
-function addAgent(agentId, role, dependsOn = []) {
-  const panel = document.getElementById('agentsPanel');
-  const empty = document.getElementById('agentsEmpty');
-  if (empty) empty.remove();
-
-  if (agentMap[agentId]) return; // already shown
-
-  const card = document.createElement('div');
-  card.className = 'agent-card pending';
-  card.id = `agent-${agentId}`;
-  card.innerHTML = `
-    <div class="agent-header">
-      <span class="step-icon" id="agent-icon-${agentId}">○</span>
-      <span class="agent-name">${agentId}</span>
-      <span class="agent-role">${role}</span>
-      <span class="agent-status-text" id="agent-status-${agentId}" style="color:#484f58">pending</span>
-    </div>
-    <div class="agent-tools" id="agent-tools-${agentId}"></div>
-    ${dependsOn.length ? `<div class="agent-depends">depends: ${dependsOn.join(', ')}</div>` : ''}
-  `;
-  panel.appendChild(card);
-  agentMap[agentId] = { card, tools: new Set() };
-  addEvent(`agent <span class="highlight">${agentId}</span> created (${role})`, '');
+function addAgent(id, role) {
+  if (agentMap[id]) return;
+  const body = document.getElementById('agentsBody');
+  document.getElementById('agentsEmpty')?.remove();
+  agentCount++;
+  document.getElementById('agentCount').textContent = agentCount;
+  const row = document.createElement('div');
+  row.className = 'agent-row';
+  row.id = 'ar-' + id;
+  row.innerHTML = `
+    <div class="agent-icon" id="ai-${id}"><i class="ti ti-robot"></i></div>
+    <div class="agent-meta">
+      <div class="agent-name-row">
+        <span class="agent-name">${id}</span>
+        <span class="agent-role-badge">${role}</span>
+      </div>
+      <div class="agent-status-text" id="as-${id}">pending</div>
+      <div class="agent-tools-wrap" id="at-${id}"></div>
+    </div>`;
+  body.appendChild(row);
+  agentMap[id] = new Set();
 }
 
-function setAgentStatus(agentId, status, detail = '') {
-  const card = document.getElementById(`agent-${agentId}`);
-  if (!card) return;
-  const icon = document.getElementById(`agent-icon-${agentId}`);
-  const statusEl = document.getElementById(`agent-status-${agentId}`);
-  card.className = `agent-card ${status}`;
-  icon.textContent = status === 'running' ? '●' : status === 'done' ? '✓' : status === 'failed' ? '✗' : '○';
-  statusEl.textContent = detail || status;
-  statusEl.style.color = status === 'running' ? '#58a6ff' : status === 'done' ? '#3fb950' : status === 'failed' ? '#f85149' : '#484f58';
+function setAgentState(id, state, detail = '') {
+  const icon = document.getElementById('ai-' + id);
+  const status = document.getElementById('as-' + id);
+  if (!icon || !status) return;
+  icon.className = 'agent-icon' + (state ? ' ' + state : '');
+  const iconMap = { running: 'ti-loader-2', done: 'ti-check', failed: 'ti-x' };
+  icon.innerHTML = `<i class="ti ${iconMap[state] || 'ti-robot'}"></i>`;
+  status.textContent = detail || state;
+  status.style.color = state === 'running' ? '#58a6ff' : state === 'done' ? '#3fb950' : state === 'failed' ? '#f85149' : '#484f58';
 }
 
-function addToolCall(agentId, toolName) {
-  const container = document.getElementById(`agent-tools-${agentId}`);
-  if (!container) return;
-  if (agentMap[agentId] && agentMap[agentId].tools.has(toolName)) return;
-  agentMap[agentId].tools.add(toolName);
+function addToolChip(agentId, tool) {
+  const wrap = document.getElementById('at-' + agentId);
+  if (!wrap || agentMap[agentId]?.has(tool)) return;
+  agentMap[agentId]?.add(tool);
   const chip = document.createElement('span');
   chip.className = 'tool-chip called';
-  chip.id = `tool-${agentId}-${toolName.replace(/[^a-zA-Z0-9]/g, '-')}`;
-  chip.textContent = `✓ ${toolName}`;
-  container.appendChild(chip);
+  chip.id = `tc-${agentId}-${tool.replace(/\W/g, '-')}`;
+  chip.innerHTML = `<i class="ti ti-check"></i>${tool}`;
+  wrap.appendChild(chip);
 }
 
-function setToolResult(agentId, toolName, success) {
-  const id = `tool-${agentId}-${toolName.replace(/[^a-zA-Z0-9]/g, '-')}`;
-  const chip = document.getElementById(id);
-  if (!chip) return;
-  chip.className = `tool-chip ${success ? 'called' : 'errored'}`;
-  chip.textContent = `${success ? '✓' : '✗'} ${toolName}`;
-}
-
-function showResult(content) {
-  const panel = document.getElementById('resultPanel');
-  const box = document.getElementById('resultContent');
-  panel.classList.remove('hidden');
-  box.innerHTML = content;
-  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+function showResult(html) {
+  const p = document.getElementById('resultPanel');
+  document.getElementById('resultBody').innerHTML = html;
+  p.style.display = 'block';
+  p.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 async function run() {
-  const input = document.getElementById('goalInput');
-  const btn = document.getElementById('runBtn');
-  const goal = input.value.trim();
+  const goal = textarea.value.trim();
   if (!goal) return;
-
+  const btn = document.getElementById('runBtn');
   btn.disabled = true;
-  btn.textContent = '● running';
+  btn.innerHTML = '<i class="ti ti-loader-2"></i> running';
 
-  // Reset UI
-  document.getElementById('taskId').textContent = '—';
-  setStatus('idle');
-  ['planner','spawner','executor','evaluator','synthesizer'].forEach(n => setStep(n, 'waiting', 'waiting'));
-  document.getElementById('agentsPanel').innerHTML = '<div class="empty-state" id="agentsEmpty"><div class="icon">◈</div><div>agents will appear here as they are created</div></div>';
-  document.getElementById('eventsList').innerHTML = '<div class="empty-state" id="eventsEmpty" style="padding: 16px;"><div>connecting...</div></div>';
-  document.getElementById('resultPanel').classList.add('hidden');
-  agentMap = {};
-  if (source) { source.close(); source = null; }
+  ['planner', 'spawner', 'executor', 'evaluator', 'synthesizer'].forEach(n => setPipeStep(n, ''));
+  document.getElementById('agentsBody').innerHTML = '<div class="empty" id="agentsEmpty"><i class="ti ti-circles-relation"></i>agents will appear as they are created</div>';
+  document.getElementById('eventsList').innerHTML = '<div class="empty" style="padding:24px 8px;" id="eventsEmpty"><i class="ti ti-activity"></i>connecting…</div>';
+  document.getElementById('resultPanel').style.display = 'none';
+  document.getElementById('taskPill').textContent = 'starting…';
+  agentMap = {}; agentCount = 0;
+  document.getElementById('agentCount').textContent = '0';
+  if (src) { src.close(); src = null; }
+  setDot('running');
 
   try {
     const resp = await fetch('/run', {
@@ -368,109 +342,88 @@ async function run() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ goal }),
     });
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const data = await resp.json();
-    currentTaskId = data.task_id;
-    document.getElementById('taskId').textContent = currentTaskId;
-    setStatus('running');
-    addEvent(`task <span class="highlight">${currentTaskId}</span> started`, 'info');
-
-    connectSSE(currentTaskId);
+    document.getElementById('taskPill').textContent = data.task_id;
+    addEvent(`task <span class="c-hi">${data.task_id}</span> started`, 'c-info');
+    connectSSE(data.task_id);
   } catch (err) {
-    addEvent(`failed to start task: ${err.message}`, 'bad');
-    btn.disabled = false;
-    btn.textContent = '▶ run';
+    addEvent('failed to start: ' + err.message, 'c-bad');
+    setDot('failed');
+    resetBtn();
   }
 }
 
 function connectSSE(taskId) {
-  if (source) source.close();
+  if (src) src.close();
+  src = new EventSource('/tasks/' + taskId + '/stream');
 
-  source = new EventSource(`/tasks/${taskId}/stream`);
-
-  source.addEventListener('status', (e) => {
-    const data = JSON.parse(e.data);
-    if (data.status === 'running') setStatus('running');
-    else if (data.status === 'done') setStatus('done');
+  src.addEventListener('status', e => {
+    const d = JSON.parse(e.data);
+    setDot(d.status);
   });
 
-  source.addEventListener('node', (e) => {
-    const data = JSON.parse(e.data);
-    const node = data.node;
-    if (data.status === 'running') {
-      setStep(node, 'running', data.agent ? `creating ${data.agent}...` : 'running...');
-      if (data.agent) addEvent(`<span class="highlight">spawner</span> → creating ${data.agent}`, 'info');
-    } else if (data.status === 'done') {
-      const detail = data.output ? `${data.output.length} subtasks` : data.agent ? `${data.agent} done` : 'done';
-      setStep(node, 'done', detail);
-      if (node === 'planner' && data.output) {
-        addEvent(`<span class="highlight">planner</span> → ${data.output.length} subtasks`, 'info');
-      }
+  src.addEventListener('node', e => {
+    const d = JSON.parse(e.data);
+    setPipeStep(d.node, d.status === 'running' ? 'running' : d.status === 'done' ? 'done' : 'failed');
+    if (d.status === 'done' && d.node === 'planner' && d.output)
+      addEvent(`planner → <span class="c-hi">${d.output.length}</span> subtasks`, 'c-info');
+  });
+
+  src.addEventListener('subtask', e => {
+    const d = JSON.parse(e.data);
+    if (d.status === 'running') {
+      addAgent(d.agent_id, d.role || 'agent');
+      setAgentState(d.agent_id, 'running', 'running');
+      addEvent(`<span class="c-hi">${d.agent_id}</span> started`);
+    } else if (d.status === 'done') {
+      setAgentState(d.agent_id, 'done', 'done');
+      addEvent(`<span class="c-hi">${d.agent_id}</span> done`, 'c-good');
+    } else if (d.status === 'retrying') {
+      setAgentState(d.agent_id, 'running', `retry ${d.attempt}`);
+      addEvent(`<span class="c-hi">${d.agent_id}</span> retrying (${d.attempt})`);
     }
   });
 
-  source.addEventListener('subtask', (e) => {
-    const data = JSON.parse(e.data);
-    const agentId = data.agent_id;
-    if (data.status === 'running') {
-      addAgent(agentId, data.role || 'agent');
-      setAgentStatus(agentId, 'running');
-      addEvent(`<span class="highlight">${agentId}</span> running`, '');
-    } else if (data.status === 'done') {
-      setAgentStatus(agentId, 'done', 'done');
-      addEvent(`<span class="highlight">${agentId}</span> done ✓`, 'good');
-    } else if (data.status === 'retrying') {
-      setAgentStatus(agentId, 'running', `retry ${data.attempt}`);
-      addEvent(`<span class="highlight">${agentId}</span> retrying (attempt ${data.attempt})`, '');
-    }
+  src.addEventListener('tool_call', e => {
+    const d = JSON.parse(e.data);
+    addToolChip(d.agent_id, d.tool);
+    addEvent(`<span class="c-hi">${d.agent_id}</span> → ${d.tool}`);
   });
 
-  source.addEventListener('tool_call', (e) => {
-    const data = JSON.parse(e.data);
-    addToolCall(data.agent_id, data.tool);
-    addEvent(`<span class="highlight">${data.agent_id}</span> → tool: ${data.tool}`, '');
+  src.addEventListener('error', e => {
+    const d = JSON.parse(e.data);
+    const who = d.subtask_id || d.node || 'system';
+    addEvent(`${who}: ${d.message}`, 'c-bad');
+    if (d.subtask_id) setAgentState(d.subtask_id, 'failed', 'failed');
   });
 
-  source.addEventListener('tool_result', (e) => {
-    const data = JSON.parse(e.data);
-    setToolResult(data.agent_id, data.tool, true);
-  });
-
-  source.addEventListener('error', (e) => {
-    const data = JSON.parse(e.data);
-    const who = data.subtask_id || data.node || 'system';
-    addEvent(`<span class="bad">error</span> ${who}: ${data.message}`, 'bad');
-    if (data.subtask_id) {
-      setAgentStatus(data.subtask_id, 'failed', 'failed');
-    }
-  });
-
-  source.addEventListener('complete', (e) => {
-    const data = JSON.parse(e.data);
-    addEvent(`task complete ✓`, 'good');
-    showResult(data.result || '');
-    setStatus('done');
+  src.addEventListener('complete', e => {
+    const d = JSON.parse(e.data);
+    addEvent('task complete', 'c-good');
+    showResult(d.result || '');
+    setDot('done');
     cleanup();
   });
 
-  source.onerror = () => {
-    // EventSource auto-reconnects; only act if we're not expecting more
-    if (source.readyState === EventSource.CLOSED) {
-      addEvent('connection closed', '');
+  src.onerror = () => {
+    if (src.readyState === EventSource.CLOSED) {
+      addEvent('connection closed');
       cleanup();
     }
   };
 }
 
-function cleanup() {
-  if (source) { source.close(); source = null; }
-  document.getElementById('runBtn').disabled = false;
-  document.getElementById('runBtn').textContent = '▶ run';
+function resetBtn() {
+  const btn = document.getElementById('runBtn');
+  btn.disabled = false;
+  btn.innerHTML = '<i class="ti ti-player-play"></i> run';
 }
 
-document.getElementById('goalInput').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') run();
-});
+function cleanup() {
+  if (src) { src.close(); src = null; }
+  resetBtn();
+}
 </script>
 </body>
 </html>

@@ -150,7 +150,17 @@ class Agent:
         self.messages.append(user)
         self.messages.append(response)
 
-        final_content = response.content if isinstance(response.content, str) else str(response.content)
+        if isinstance(response.content, str):
+            final_content = response.content
+        elif isinstance(response.content, list):
+            final_content = "\n".join(
+                block.get("text", "") if isinstance(block, dict)
+                else block.text if hasattr(block, "text")
+                else str(block)
+                for block in response.content
+            ).strip()
+        else:
+            final_content = str(response.content)
         if final_content.strip():
             log.log("AGENT", f"{self.agent_id} — got LLM final response ({len(final_content)} chars)")
             return final_content

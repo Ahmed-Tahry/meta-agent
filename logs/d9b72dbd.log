@@ -1,0 +1,342 @@
+======================================================================
+PIPELINE START  |  task_id=d9b72dbd
+GOAL            |  i wanna know about quantum computers
+======================================================================
+
+--- [2026-06-06T10:44:29.135Z] ORCHESTRATOR ---
+    Pipeline started — goal sent to planner
+
+--- [2026-06-06T10:44:29.135Z] PLANNER ---
+    Calling Gemini to decompose goal
+    model=gemini-3.1-flash-lite
+
+--- [2026-06-06T10:44:29.135Z] PLANNER ---
+    Prompt sent to Gemini:
+    ------------------------------------------------------------
+    | Decompose the following goal into a list of subtasks.
+    | Assign each subtask to whatever role makes sense for the work (e.g. researcher, coder, writer, data_analyzer, reviewer, etc.).
+    | Pre-built tools available: web_search, file_reader, code_executor.
+    | If a subtask requires a capability none of the pre-built tools provide, define a new custom tool 
+    | with a unique name and a clear description of what it should do in tool_definitions.
+    | 
+    | CRITICAL: Your entire response must be ONLY a valid JSON array. No markdown formatting, no code fences, no explanations, no preamble, no postscript. Start with '[' and end with ']'.
+    | 
+    | Each item in the array has:
+    | - agent_id: unique identifier (e.g. "researcher_01", "coder_01", "analyzer_01")
+    | - role: what kind of agent should handle this (anything you think fits)
+    | - goal: what this subtask should accomplish
+    | - tools: list of tool names (pre-built + custom tool names you define)
+    | - tool_definitions: object mapping custom tool names to their goals (e.g. {"my_tool": "what my_tool does"})
+    | - depends_on: list of agent_ids this subtask depends on (empty list if none)
+    | - output_format: "text" or "json"
+    | 
+    | Goal: i wanna know about quantum computers
+    ------------------------------------------------------------
+
+--- [2026-06-06T10:44:31.692Z] PLANNER ---
+    Raw response from Gemini:
+    ------------------------------------------------------------
+    | [
+    |   {
+    |     "agent_id": "researcher_01",
+    |     "role": "researcher",
+    |     "goal": "Conduct a comprehensive search on the fundamental principles, current state, and key players in quantum computing.",
+    |     "tools": ["web_search"],
+    |     "tool_definitions": {},
+    |     "depends_on": [],
+    |     "output_format": "text"
+    |   },
+    |   {
+    |     "agent_id": "analyzer_01",
+    |     "role": "data_analyzer",
+    |     "goal": "Synthesize the research findings to categorize the information into core concepts, hardware approaches, and practical applications.",
+    |     "tools": [],
+    |     "tool_definitions": {},
+    |     "depends_on": ["researcher_01"],
+    |     "output_format": "json"
+    |   },
+    |   {
+    |     "agent_id": "writer_01",
+    |     "role": "writer",
+    |     "goal": "Draft a clear, accessible summary explaining what quantum computers are, how they differ from classical computers, and their potential future impact.",
+    |     "tools": [],
+    |     "tool_definitions": {},
+    |     "depends_on": ["analyzer_01"],
+    |     "output_format": "text"
+    |   },
+    |   {
+    |     "agent_id": "reviewer_01",
+    |     "role": "reviewer",
+    |     "goal": "Verify the accuracy of the technical claims in the summary and ensure the tone is appropriate for the target audience.",
+    |     "tools": ["web_search"],
+    |     "tool_definitions": {},
+    |     "depends_on": ["writer_01"],
+    |     "output_format": "text"
+    |   }
+    | ]
+    ------------------------------------------------------------
+
+--- [2026-06-06T10:44:31.721Z] PLANNER ---
+    Parsed 4 subtask(s) from JSON
+
+--- [2026-06-06T10:44:31.721Z] PLANNER ---
+    Final plan (4 subtasks):
+    ------------------------------------------------------------
+    | [researcher_01] role=researcher  goal=Conduct a comprehensive search on the fundamental principles, current state, and key players in quantum computing.  tools=['web_search']  output_format=text
+    |   [analyzer_01] role=data_analyzer  goal=Synthesize the research findings to categorize the information into core concepts, hardware approaches, and practical applications.  tools=[]  output_format=json
+    |   [writer_01] role=writer  goal=Draft a clear, accessible summary explaining what quantum computers are, how they differ from classical computers, and their potential future impact.  tools=[]  output_format=text
+    |   [reviewer_01] role=reviewer  goal=Verify the accuracy of the technical claims in the summary and ensure the tone is appropriate for the target audience.  tools=['web_search']  output_format=text
+    ------------------------------------------------------------
+
+--- [2026-06-06T10:44:31.723Z] PLANNER ---
+    Decomposed into 4 subtasks:
+    ------------------------------------------------------------
+    | [researcher_01] role=researcher  goal=Conduct a comprehensive search on the fundamental principles, current state, and key players in quantum computing.  tools=['web_search']  depends_on=[]
+    |   [analyzer_01] role=data_analyzer  goal=Synthesize the research findings to categorize the information into core concepts, hardware approaches, and practical applications.  tools=[]  depends_on=['researcher_01']
+    |   [writer_01] role=writer  goal=Draft a clear, accessible summary explaining what quantum computers are, how they differ from classical computers, and their potential future impact.  tools=[]  depends_on=['analyzer_01']
+    |   [reviewer_01] role=reviewer  goal=Verify the accuracy of the technical claims in the summary and ensure the tone is appropriate for the target audience.  tools=['web_search']  depends_on=['writer_01']
+    ------------------------------------------------------------
+
+--- [2026-06-06T10:44:31.723Z] ORCHESTRATOR ---
+    Starting DAG execution
+
+--- [2026-06-06T10:44:31.732Z] ORCHESTRATOR ---
+    Running 1 ready subtask(s): ['researcher_01']
+
+--- [2026-06-06T10:44:31.733Z] ORCHESTRATOR ---
+    Starting subtask: researcher_01 (attempt 1/3)
+    role=researcher  goal=Conduct a comprehensive search on the fundamental principles, current state, and key players in quantum computing.  tools=['web_search']  depends_on=[]
+
+--- [2026-06-06T10:44:40.544Z] AGENT FACTORY ---
+    Agent created: researcher_01 (attempt 1)
+    role=researcher  tools=['web_search']
+
+--- [2026-06-06T10:44:40.573Z] AGENT ---
+    Agent researcher_01 running
+    goal=Conduct a comprehensive search on the fundamental principles, current state, and key players in quantum computing.  tools=['web_search']  shared_state_keys=[]
+
+--- [2026-06-06T10:44:40.573Z] AGENT ---
+    researcher_01 — sending initial prompt to LLM
+
+--- [2026-06-06T10:44:41.920Z] AGENT ---
+    researcher_01 — tool call: web_search
+    args={"query": "fundamental principles of quantum computing superposition entanglement interference"}
+
+--- [2026-06-06T10:44:43.219Z] AGENT ---
+    researcher_01 — tool result: web_search
+    result (2675 chars): Wikipedia search results for: fundamental principles of quantum computing superposition entanglement interference
+    ---
+    Result 1: Quantum superposition
+      URL: https://en.wikipedia.org/wiki/Quantum_superposition
+      Quantum superposition is a fundamental principle of quantum mechanics that states that li
+
+--- [2026-06-06T10:44:43.248Z] AGENT ---
+    researcher_01 — tool call: web_search
+    args={"query": "current state of quantum computing 2024 technology milestones challenges"}
+
+--- [2026-06-06T10:44:44.382Z] AGENT ---
+    researcher_01 — tool result: web_search
+    result (2706 chars): Wikipedia search results for: current state of quantum computing 2024 technology milestones challenges
+    ---
+    Result 1: Quantum computing
+      URL: https://en.wikipedia.org/wiki/Quantum_computing
+      A quantum computer is a real or theoretical computer that exploits quantum phenomena like superposition and
+
+--- [2026-06-06T10:44:44.385Z] AGENT ---
+    researcher_01 — tool call: web_search
+    args={"query": "key players in quantum computing industry IBM Google IonQ Rigetti 2024"}
+
+--- [2026-06-06T10:44:45.305Z] AGENT ---
+    researcher_01 — tool result: web_search
+    result (1403 chars): Wikipedia search results for: key players in quantum computing industry IBM Google IonQ Rigetti 2024
+    ---
+    Result 1: List of companies involved in quantum computing, communication or sensing
+      URL: https://en.wikipedia.org/wiki/List_of_companies_involved_in_quantum_computing,_communication_or_sensing
+
+--- [2026-06-06T10:44:59.298Z] AGENT ---
+    researcher_01 — got LLM final response (4127 chars)
+
+--- [2026-06-06T10:44:59.298Z] AGENT ---
+    Agent researcher_01 final output (4127 chars):
+    ------------------------------------------------------------
+    | [{'type': 'text', 'text': '### Executive Summary\nQuantum computing represents a paradigm shift in information processing, moving beyond the classical binary system (bits) to harness the principles of quantum mechanics. Unlike classical computers, which process information in a linear, binary fashion, quantum computers use **qubits** to perform parallel computations of vast complexity. Currently, the industry is in the **Noisy Intermediate-Scale Quantum (NISQ)** era, characterized by processors with a limited number of qubits that are highly susceptible to environmental noise and decoherence. While significant milestones have been achieved in demonstrating "quantum supremacy" (or quantum advantage), the field is currently focused on scaling hardware, improving qubit fidelity, and developing robust error correction protocols.\n\n### Core Principles\nQuantum computing relies on three primary phenomena from quantum mechanics:\n\n*   **Superposition:** Unlike a classical bit that is either 0 or 1, a qubit in a state of superposition exists in a complex linear combination of both states simultaneously. This allows a quantum computer to process a vast number of potential states at once.\n*   **Entanglement:** This is a quantum phenomenon where the states of two or more particles become linked, such that the state of one particle cannot be described independently of the others, regardless of the distance between them. Entanglement allows for the high-degree correlation required for powerful quantum algorithms.\n*   **Interference:** Quantum algorithms use interference to manipulate the probability amplitudes of the qubit states. By causing constructive interference, the probability of the correct answer increases, while destructive interference cancels out incorrect results.\n\n### Market Analysis\nThe quantum landscape is a mix of academic research, government investment, and intense private sector competition.\n\n*   **Industry Status:** The industry is currently in the NISQ era, where devices are prone to errors and lack the scale for full fault-tolerant computation. The primary challenge is scaling up qubit counts while simultaneously reducing the "noise" (environmental interference) that causes decoherence.\n*   **Key Players:** \n    *   **IBM:** A leader in superconducting qubit architecture, consistently releasing hardware roadmaps and offering cloud access to quantum systems for research.\n    *   **Google:** Famous for its 2019 "quantum supremacy" experiment; focuses on superconducting qubits with a heavy emphasis on error correction research.\n    *   **IonQ:** A leader in trapped-ion quantum computing, which utilizes electromagnetic fields to isolate and control ions as qubits, known for high-fidelity gates.\n    *   **Rigetti Computing:** Focuses on superconducting qubits and is noted for its work on hybrid quantum-classical computing architectures.\n*   **Primary Challenges:**\n    1.  **Decoherence:** The fragility of quantum states when interacting with the environment.\n    2.  **Scalability:** Integrating thousands or millions of qubits into a stable system without exponentially increasing the error rate.\n    3.  **Error Correction:** Developing systems capable of detecting and fixing quantum errors in real-time without destroying the underlying quantum information.\n\n### References\n*   [Wikipedia: Quantum Superposition](https://en.wikipedia.org/wiki/Quantum_superposition)\n*   [Wikipedia: Quantum Entanglement](https://en.wikipedia.org/wiki/Quantum_entanglement)\n*   [Wikipedia: Quantum Computing](https://en.wikipedia.org/wiki/Quantum_computing)\n*   [Wikipedia: Noisy Intermediate-Scale Quantum (NISQ) Computing](https://en.wikipedia.org/wiki/Noisy_intermediate-scale_quantum_computing)\n*   [Wikipedia: Quantum Supremacy](https://en.wikipedia.org/wiki/Quantum_supremacy)\n*   [Wikipedia: List of companies involved in quantum computing](https://en.wikipedia.org/wiki/List_of_companies_involved_in_quantum_computing,_communication_or_sensing)', 'extras': {'signature': 'EjQKMgEMOdbH30LjvxTmgPBAfKFOgZnVk/2QdJYPZxfI5kmonypsyEUjHRivcHcNHMNOnN2B'}}]
+    ------------------------------------------------------------
+
+--- [2026-06-06T10:44:59.326Z] AGENT OUTPUT ---
+    Subtask researcher_01 produced output (4127 chars):
+    ------------------------------------------------------------
+    | [{'type': 'text', 'text': '### Executive Summary\nQuantum computing represents a paradigm shift in information processing, moving beyond the classical binary system (bits) to harness the principles of quantum mechanics. Unlike classical computers, which process information in a linear, binary fashion, quantum computers use **qubits** to perform parallel computations of vast complexity. Currently, the industry is in the **Noisy Intermediate-Scale Quantum (NISQ)** era, characterized by processors with a limited number of qubits that are highly susceptible to environmental noise and decoherence. While significant milestones have been achieved in demonstrating "quantum supremacy" (or quantum advantage), the field is currently focused on scaling hardware, improving qubit fidelity, and developing robust error correction protocols.\n\n### Core Principles\nQuantum computing relies on three primary phenomena from quantum mechanics:\n\n*   **Superposition:** Unlike a classical bit that is either 0 or 1, a qubit in a state of superposition exists in a complex linear combination of both states simultaneously. This allows a quantum computer to process a vast number of potential states at once.\n*   **Entanglement:** This is a quantum phenomenon where the states of two or more particles become linked, such that the state of one particle cannot be described independently of the others, regardless of the distance between them. Entanglement allows for the high-degree correlation required for powerful quantum algorithms.\n*   **Interference:** Quantum algorithms use interference to manipulate the probability amplitudes of the qubit states. By causing constructive interference, the probability of the correct answer increases, while destructive interference cancels out incorrect results.\n\n### Market Analysis\nThe quantum landscape is a mix of academic research, government investment, and intense private sector competition.\n\n*   **Industry Status:** The industry is currently in the NISQ era, where devices are prone to errors and lack the scale for full fault-tolerant computation. The primary challenge is scaling up qubit counts while simultaneously reducing the "noise" (environmental interference) that causes decoherence.\n*   **Key Players:** \n    *   **IBM:** A leader in superconducting qubit architecture, consistently releasing hardware roadmaps and offering cloud access to quantum systems for research.\n    *   **Google:** Famous for its 2019 "quantum supremacy" experiment; focuses on superconducting qubits with a heavy emphasis on error correction research.\n    *   **IonQ:** A leader in trapped-ion quantum computing, which utilizes electromagnetic fields to isolate and control ions as qubits, known for high-fidelity gates.\n    *   **Rigetti Computing:** Focuses on superconducting qubits and is noted for its work on hybrid quantum-classical computing architectures.\n*   **Primary Challenges:**\n    1.  **Decoherence:** The fragility of quantum states when interacting with the environment.\n    2.  **Scalability:** Integrating thousands or millions of qubits into a stable system without exponentially increasing the error rate.\n    3.  **Error Correction:** Developing systems capable of detecting and fixing quantum errors in real-time without destroying the underlying quantum information.\n\n### References\n*   [Wikipedia: Quantum Superposition](https://en.wikipedia.org/wiki/Quantum_superposition)\n*   [Wikipedia: Quantum Entanglement](https://en.wikipedia.org/wiki/Quantum_entanglement)\n*   [Wikipedia: Quantum Computing](https://en.wikipedia.org/wiki/Quantum_computing)\n*   [Wikipedia: Noisy Intermediate-Scale Quantum (NISQ) Computing](https://en.wikipedia.org/wiki/Noisy_intermediate-scale_quantum_computing)\n*   [Wikipedia: Quantum Supremacy](https://en.wikipedia.org/wiki/Quantum_supremacy)\n*   [Wikipedia: List of companies involved in quantum computing](https://en.wikipedia.org/wiki/List_of_companies_involved_in_quantum_computing,_communication_or_sensing)', 'extras': {'signature': 'EjQKMgEMOdbH30LjvxTmgPBAfKFOgZnVk/2QdJYPZxfI5kmonypsyEUjHRivcHcNHMNOnN2B'}}]
+    ------------------------------------------------------------
+
+--- [2026-06-06T10:44:59.326Z] EVALUATOR ---
+    Subtask researcher_01 PASSED evaluation
+    output length: 4127 chars
+
+--- [2026-06-06T10:44:59.328Z] ORCHESTRATOR ---
+    Subtask researcher_01 completed successfully
+
+--- [2026-06-06T10:44:59.329Z] ORCHESTRATOR ---
+    Subtask researcher_01 added to completed set
+
+--- [2026-06-06T10:44:59.329Z] ORCHESTRATOR ---
+    Running 1 ready subtask(s): ['analyzer_01']
+
+--- [2026-06-06T10:44:59.329Z] ORCHESTRATOR ---
+    Starting subtask: analyzer_01 (attempt 1/3)
+    role=data_analyzer  goal=Synthesize the research findings to categorize the information into core concepts, hardware approaches, and practical applications.  tools=[]  depends_on=['researcher_01']
+
+--- [2026-06-06T10:45:09.190Z] AGENT FACTORY ---
+    Agent created: analyzer_01 (attempt 1)
+    role=data_analyzer  tools=[]
+
+--- [2026-06-06T10:45:09.220Z] AGENT ---
+    Agent analyzer_01 running
+    goal=Synthesize the research findings to categorize the information into core concepts, hardware approaches, and practical applications.  tools=[]  shared_state_keys=['researcher_01']
+
+--- [2026-06-06T10:45:09.220Z] AGENT ---
+    analyzer_01 — sending initial prompt to LLM
+
+--- [2026-06-06T10:45:12.721Z] AGENT ---
+    analyzer_01 — got LLM final response (361 chars)
+
+--- [2026-06-06T10:45:12.721Z] AGENT ---
+    Agent analyzer_01 final output (361 chars):
+    ------------------------------------------------------------
+    | [{'type': 'text', 'text': '```json\n{\n  "core_concepts": [\n    "Quantum mechanics",\n    "Qubits",\n    "Noisy Intermediate-Scale Quantum (NISQ) era"\n  ],\n  "hardware_approaches": [\n    "Quantum processors"\n  ],\n  "practical_applications": []\n}\n```', 'extras': {'signature': 'EjQKMgEMOdbHxlJJx5gwCT8ck2WA9M6pDdF1ZvpF6bJIgNmEd1YT4/ixm2su6j9GHORAYN5+'}}]
+    ------------------------------------------------------------
+
+--- [2026-06-06T10:45:12.749Z] AGENT OUTPUT ---
+    Subtask analyzer_01 produced output (361 chars):
+    ------------------------------------------------------------
+    | [{'type': 'text', 'text': '```json\n{\n  "core_concepts": [\n    "Quantum mechanics",\n    "Qubits",\n    "Noisy Intermediate-Scale Quantum (NISQ) era"\n  ],\n  "hardware_approaches": [\n    "Quantum processors"\n  ],\n  "practical_applications": []\n}\n```', 'extras': {'signature': 'EjQKMgEMOdbHxlJJx5gwCT8ck2WA9M6pDdF1ZvpF6bJIgNmEd1YT4/ixm2su6j9GHORAYN5+'}}]
+    ------------------------------------------------------------
+
+--- [2026-06-06T10:45:12.750Z] EVALUATOR ---
+    Subtask analyzer_01 PASSED evaluation
+    output length: 361 chars
+
+--- [2026-06-06T10:45:12.752Z] ORCHESTRATOR ---
+    Subtask analyzer_01 completed successfully
+
+--- [2026-06-06T10:45:12.753Z] ORCHESTRATOR ---
+    Subtask analyzer_01 added to completed set
+
+--- [2026-06-06T10:45:12.753Z] ORCHESTRATOR ---
+    Running 1 ready subtask(s): ['writer_01']
+
+--- [2026-06-06T10:45:12.753Z] ORCHESTRATOR ---
+    Starting subtask: writer_01 (attempt 1/3)
+    role=writer  goal=Draft a clear, accessible summary explaining what quantum computers are, how they differ from classical computers, and their potential future impact.  tools=[]  depends_on=['analyzer_01']
+
+--- [2026-06-06T10:45:18.610Z] AGENT FACTORY ---
+    Agent created: writer_01 (attempt 1)
+    role=writer  tools=[]
+
+--- [2026-06-06T10:45:18.641Z] AGENT ---
+    Agent writer_01 running
+    goal=Draft a clear, accessible summary explaining what quantum computers are, how they differ from classical computers, and their potential future impact.  tools=[]  shared_state_keys=['analyzer_01']
+
+--- [2026-06-06T10:45:18.641Z] AGENT ---
+    writer_01 — sending initial prompt to LLM
+
+--- [2026-06-06T10:45:27.598Z] AGENT ---
+    writer_01 — got LLM final response (3119 chars)
+
+--- [2026-06-06T10:45:27.598Z] AGENT ---
+    Agent writer_01 final output (3119 chars):
+    ------------------------------------------------------------
+    | [{'type': 'text', 'text': '# Understanding Quantum Computing: A New Frontier\n\nQuantum computing represents one of the most significant shifts in the history of information technology. While traditional computers have powered our digital world for decades, they are hitting physical limits that quantum computers are uniquely positioned to overcome.\n\n### Classical vs. Quantum: The Fundamental Difference\n\nTo understand how quantum computers work, we must first look at the foundation of modern technology.\n\n*   **Classical Computing (The Bit):** Your laptop, smartphone, and the server hosting this text operate on **bits**. A bit is a binary unit—essentially a tiny light switch that is either **0 (off)** or **1 (on)**. Every calculation, photo, and website is built on long strings of these zeros and ones.\n*   **Quantum Computing (The Qubit):** Quantum computers use **qubits**. Thanks to the laws of quantum mechanics, qubits can exist in a state called **superposition**, meaning they represent both 0 and 1 simultaneously. Furthermore, through a phenomenon called **entanglement**, qubits can be linked so that the state of one instantly influences another, regardless of distance.\n\nThis allows quantum computers to process vast amounts of data in parallel. While a classical computer checks one potential solution to a problem after another, a quantum computer can evaluate millions of possibilities simultaneously.\n\n### The NISQ Era\nWe are currently in the **Noisy Intermediate-Scale Quantum (NISQ)** era. This means that while we have built functional quantum processors, they are still prone to "noise"—external interference like heat or electromagnetic waves that causes errors. Developing stable, error-corrected systems is the primary challenge researchers are working to solve today.\n\n### Potential Future Impact\nOnce fully realized, quantum computing will not replace your personal computer, but it will revolutionize specialized fields by solving problems that are currently impossible for even the world’s fastest supercomputers:\n\n*   **Drug Discovery:** Simulating molecular interactions at the atomic level could drastically shorten the time needed to develop life-saving medicines.\n*   **Material Science:** Researchers could discover new materials for high-efficiency batteries, solar panels, and carbon-capture technology.\n*   **Cryptography:** Quantum algorithms could break current encryption standards, necessitating a global shift toward "quantum-resistant" security protocols.\n*   **Optimization:** Quantum systems can streamline complex logistics, such as global supply chains or financial market models, identifying the most efficient paths among trillions of variables.\n\nIn short, quantum computing is not just a faster version of what we have today; it is an entirely new tool that allows us to interact with the fundamental building blocks of nature. As we refine this technology, we unlock the potential to solve some of humanity\'s most complex challenges.', 'extras': {'signature': 'EjQKMgEMOdbHF3LASRlgZmIe83Ac7fdPaUD887thYX0ZkET5mqdS728BECEXm7jR1fb1VdSX'}}]
+    ------------------------------------------------------------
+
+--- [2026-06-06T10:45:27.627Z] AGENT OUTPUT ---
+    Subtask writer_01 produced output (3119 chars):
+    ------------------------------------------------------------
+    | [{'type': 'text', 'text': '# Understanding Quantum Computing: A New Frontier\n\nQuantum computing represents one of the most significant shifts in the history of information technology. While traditional computers have powered our digital world for decades, they are hitting physical limits that quantum computers are uniquely positioned to overcome.\n\n### Classical vs. Quantum: The Fundamental Difference\n\nTo understand how quantum computers work, we must first look at the foundation of modern technology.\n\n*   **Classical Computing (The Bit):** Your laptop, smartphone, and the server hosting this text operate on **bits**. A bit is a binary unit—essentially a tiny light switch that is either **0 (off)** or **1 (on)**. Every calculation, photo, and website is built on long strings of these zeros and ones.\n*   **Quantum Computing (The Qubit):** Quantum computers use **qubits**. Thanks to the laws of quantum mechanics, qubits can exist in a state called **superposition**, meaning they represent both 0 and 1 simultaneously. Furthermore, through a phenomenon called **entanglement**, qubits can be linked so that the state of one instantly influences another, regardless of distance.\n\nThis allows quantum computers to process vast amounts of data in parallel. While a classical computer checks one potential solution to a problem after another, a quantum computer can evaluate millions of possibilities simultaneously.\n\n### The NISQ Era\nWe are currently in the **Noisy Intermediate-Scale Quantum (NISQ)** era. This means that while we have built functional quantum processors, they are still prone to "noise"—external interference like heat or electromagnetic waves that causes errors. Developing stable, error-corrected systems is the primary challenge researchers are working to solve today.\n\n### Potential Future Impact\nOnce fully realized, quantum computing will not replace your personal computer, but it will revolutionize specialized fields by solving problems that are currently impossible for even the world’s fastest supercomputers:\n\n*   **Drug Discovery:** Simulating molecular interactions at the atomic level could drastically shorten the time needed to develop life-saving medicines.\n*   **Material Science:** Researchers could discover new materials for high-efficiency batteries, solar panels, and carbon-capture technology.\n*   **Cryptography:** Quantum algorithms could break current encryption standards, necessitating a global shift toward "quantum-resistant" security protocols.\n*   **Optimization:** Quantum systems can streamline complex logistics, such as global supply chains or financial market models, identifying the most efficient paths among trillions of variables.\n\nIn short, quantum computing is not just a faster version of what we have today; it is an entirely new tool that allows us to interact with the fundamental building blocks of nature. As we refine this technology, we unlock the potential to solve some of humanity\'s most complex challenges.', 'extras': {'signature': 'EjQKMgEMOdbHF3LASRlgZmIe83Ac7fdPaUD887thYX0ZkET5mqdS728BECEXm7jR1fb1VdSX'}}]
+    ------------------------------------------------------------
+
+--- [2026-06-06T10:45:27.627Z] EVALUATOR ---
+    Subtask writer_01 PASSED evaluation
+    output length: 3119 chars
+
+--- [2026-06-06T10:45:27.630Z] ORCHESTRATOR ---
+    Subtask writer_01 completed successfully
+
+--- [2026-06-06T10:45:27.630Z] ORCHESTRATOR ---
+    Subtask writer_01 added to completed set
+
+--- [2026-06-06T10:45:27.630Z] ORCHESTRATOR ---
+    Running 1 ready subtask(s): ['reviewer_01']
+
+--- [2026-06-06T10:45:27.631Z] ORCHESTRATOR ---
+    Starting subtask: reviewer_01 (attempt 1/3)
+    role=reviewer  goal=Verify the accuracy of the technical claims in the summary and ensure the tone is appropriate for the target audience.  tools=['web_search']  depends_on=['writer_01']
+
+--- [2026-06-06T10:45:33.808Z] AGENT FACTORY ---
+    Agent created: reviewer_01 (attempt 1)
+    role=reviewer  tools=['web_search']
+
+--- [2026-06-06T10:45:33.838Z] AGENT ---
+    Agent reviewer_01 running
+    goal=Verify the accuracy of the technical claims in the summary and ensure the tone is appropriate for the target audience.  tools=['web_search']  shared_state_keys=['writer_01']
+
+--- [2026-06-06T10:45:33.839Z] AGENT ---
+    reviewer_01 — sending initial prompt to LLM
+
+--- [2026-06-06T10:45:46.402Z] AGENT ---
+    reviewer_01 — got LLM final response (618 chars)
+
+--- [2026-06-06T10:45:46.402Z] AGENT ---
+    Agent reviewer_01 final output (618 chars):
+    ------------------------------------------------------------
+    | [{'type': 'text', 'text': 'Please provide the **full text of the summary** you would like me to review. \n\nThe text you provided cuts off after the introduction: *"To understand how quantum computers work, we must first look at the foundation of modern"*\n\nOnce you provide the complete summary and specify the **target audience** (e.g., C-suite executives, software engineers, general public, or academic peers), I will proceed with the technical verification and tone analysis as outlined in the system prompt.', 'extras': {'signature': 'EjQKMgEMOdbH0w8tQIKF6/sfk8yyJHOM4z80On21KkQIsanr0mgKH/h6zbkAd1bfnkJ+RD2I'}}]
+    ------------------------------------------------------------
+
+--- [2026-06-06T10:45:46.431Z] AGENT OUTPUT ---
+    Subtask reviewer_01 produced output (618 chars):
+    ------------------------------------------------------------
+    | [{'type': 'text', 'text': 'Please provide the **full text of the summary** you would like me to review. \n\nThe text you provided cuts off after the introduction: *"To understand how quantum computers work, we must first look at the foundation of modern"*\n\nOnce you provide the complete summary and specify the **target audience** (e.g., C-suite executives, software engineers, general public, or academic peers), I will proceed with the technical verification and tone analysis as outlined in the system prompt.', 'extras': {'signature': 'EjQKMgEMOdbH0w8tQIKF6/sfk8yyJHOM4z80On21KkQIsanr0mgKH/h6zbkAd1bfnkJ+RD2I'}}]
+    ------------------------------------------------------------
+
+--- [2026-06-06T10:45:46.431Z] EVALUATOR ---
+    Subtask reviewer_01 PASSED evaluation
+    output length: 618 chars
+
+--- [2026-06-06T10:45:46.433Z] ORCHESTRATOR ---
+    Subtask reviewer_01 completed successfully
+
+--- [2026-06-06T10:45:46.434Z] ORCHESTRATOR ---
+    Subtask reviewer_01 added to completed set
+
+--- [2026-06-06T10:45:46.434Z] ORCHESTRATOR ---
+    All subtasks done. Passing 4 outputs to synthesizer
+
+--- [2026-06-06T10:45:46.434Z] SYNTHESIZER ---
+    Synthesizing 4 output(s): ['researcher_01', 'analyzer_01', 'writer_01', 'reviewer_01']
+
+--- [2026-06-06T10:45:46.434Z] SYNTHESIZER ---
+    Inputs to synthesis:
+    ------------------------------------------------------------
+    | [researcher_01] (4127 chars): [{'type': 'text', 'text': '### Executive Summary\nQuantum computing represents a paradigm shift in information processing, moving beyond the classical binary system (bits) to harness the principles of...
+    |   [analyzer_01] (361 chars): [{'type': 'text', 'text': '```json\n{\n  "core_concepts": [\n    "Quantum mechanics",\n    "Qubits",\n    "Noisy Intermediate-Scale Quantum (NISQ) era"\n  ],\n  "hardware_approaches": [\n    "Quantum ...
+    |   [writer_01] (3119 chars): [{'type': 'text', 'text': '# Understanding Quantum Computing: A New Frontier\n\nQuantum computing represents one of the most significant shifts in the history of information technology. While traditio...
+    |   [reviewer_01] (618 chars): [{'type': 'text', 'text': 'Please provide the **full text of the summary** you would like me to review. \n\nThe text you provided cuts off after the introduction: *"To understand how quantum computers...
+    ------------------------------------------------------------
+
+--- [2026-06-06T10:45:46.434Z] SYNTHESIZER ---
+    Calling Gemini for LLM synthesis
+
+--- [2026-06-06T10:45:57.616Z] SYNTHESIZER ---
+    LLM synthesis produced 3597 chars
+
+--- [2026-06-06T10:45:57.645Z] SYNTHESIZER ---
+    Final result:
+    ------------------------------------------------------------
+    | [{'type': 'text', 'text': '# Quantum Computing: A Strategic Overview\n\nQuantum computing represents a fundamental shift in information processing, transitioning from the binary constraints of classical bits to the multidimensional potential of **qubits**. This technology is not intended to replace classical computers but to solve specific, highly complex problems that remain intractable for even the most powerful supercomputers today.\n\n## Core Principles\nQuantum mechanics provides the foundation for this technological leap through three critical phenomena:\n\n*   **Superposition:** Unlike classical bits that exist strictly as 0 or 1, qubits exist in a complex linear combination of both states simultaneously, allowing for massive parallel processing.\n*   **Entanglement:** A phenomenon where the states of multiple qubits become linked; the state of one particle dictates the state of another regardless of distance, enabling high-degree correlation.\n*   **Interference:** A method of manipulating probability amplitudes to amplify the likelihood of correct computational results while canceling out incorrect outcomes.\n\n## Current Industry Landscape: The NISQ Era\nWe are currently in the **Noisy Intermediate-Scale Quantum (NISQ)** era. Devices in this phase are functional but limited by high sensitivity to environmental noise, which leads to decoherence—the loss of quantum information.\n\n### Key Industry Players\nThe race for quantum advantage involves significant public and private investment:\n*   **IBM:** A pioneer in superconducting qubit architecture, maintaining the most accessible cloud-based quantum ecosystem.\n*   **Google:** Known for demonstrating "quantum supremacy" and focusing heavily on fault-tolerant error correction.\n*   **IonQ:** A leader in trapped-ion technology, utilizing electromagnetic fields to isolate and control individual ions for high-fidelity gates.\n*   **Rigetti Computing:** Specializes in superconducting qubits with a specific focus on hybrid quantum-classical computing architectures.\n\n### Primary Challenges\n*   **Decoherence:** Protecting fragile quantum states from environmental interaction.\n*   **Scalability:** Integrating thousands or millions of qubits into a stable system without an exponential increase in error rates.\n*   **Error Correction:** Developing robust protocols to detect and correct errors in real-time without destroying the underlying information.\n\n## Potential Future Impact\nAs the technology matures, it is expected to revolutionize specialized industries:\n\n*   **Drug Discovery:** Enabling precise simulation of molecular interactions to accelerate pharmaceutical development.\n*   **Material Science:** Advancing high-efficiency energy solutions like superior batteries, solar panels, and carbon-capture materials.\n*   **Cryptography:** Posing a challenge to current encryption standards, driving a necessary transition to "quantum-resistant" security protocols.\n*   **Optimization:** Streamlining complex systems, such as global supply chains and financial market modeling, by identifying optimal paths among trillions of variables.\n\n***\n\n**Summary Conclusion:** Quantum computing is shifting from theoretical physics to an engineering challenge. While we are currently limited by noise and scale, ongoing breakthroughs in error correction and hardware architecture are steadily moving the field toward a future capable of solving humanity’s most complex computational problems.', 'extras': {'signature': 'EjQKMgEMOdbHHWJyvP+CzLGppE1PCbz4WZ0c6xwj9TXZvNicSBZ7Vl6QDdiwwPPG5tQ2jdg7'}}]
+    ------------------------------------------------------------
+
+--- [2026-06-06T10:45:57.647Z] ORCHESTRATOR ---
+    Pipeline completed successfully
+
+======================================================================
+PIPELINE END    |  task_id=d9b72dbd
+======================================================================

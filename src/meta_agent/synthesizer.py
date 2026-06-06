@@ -70,7 +70,16 @@ class Synthesizer:
         ]
 
         response = await self._get_llm().ainvoke(messages)
-        return response.content if isinstance(response.content, str) else str(response.content)
+        if isinstance(response.content, str):
+            return response.content
+        elif isinstance(response.content, list):
+            return "\n".join(
+                block.get("text", "") if isinstance(block, dict)
+                else block.text if hasattr(block, "text")
+                else str(block)
+                for block in response.content
+            ).strip()
+        return str(response.content)
 
     def _fallback_synthesize(self, subtask_outputs: dict[str, Any]) -> str:
         log = None

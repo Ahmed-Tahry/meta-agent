@@ -1,20 +1,11 @@
 import yaml
 
 from src.agents.base import Agent
-from src.agents.researcher import ResearcherAgent
-from src.agents.coder import CoderAgent
-from src.agents.writer import WriterAgent
 from src.factory.prompt_builder import PromptBuilder
 from src.tools.composer import ToolComposer
 from src.tools.generator import ToolGenerator
 from src.types.agent_spec import AgentSpec
 from src.tools import tool_registry
-
-AGENT_TYPE_MAP = {
-    "researcher": ResearcherAgent,
-    "coder": CoderAgent,
-    "writer": WriterAgent,
-}
 
 
 def load_agent_configs(path: str = "config/agents.yaml") -> dict:
@@ -30,7 +21,7 @@ class AgentFactory:
         self.tool_generator = ToolGenerator()
 
     def _resolve_agent_cls(self, role: str) -> type[Agent]:
-        return AGENT_TYPE_MAP.get(role, Agent)
+        return Agent
 
     def _resolve_tools(self, tool_names: list[str]) -> list:
         resolved = []
@@ -82,6 +73,10 @@ class AgentFactory:
         )
 
     async def create_dynamic(self, spec: AgentSpec) -> Agent:
+        if spec.tool_definitions:
+            for name in spec.tool_definitions:
+                if name not in spec.tools:
+                    spec.tools.append(name)
         agent_cls = self._resolve_agent_cls(spec.role)
         config = self.configs.get(spec.role, {})
         base_prompt = config.get("system_prompt", "")

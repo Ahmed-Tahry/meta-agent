@@ -33,7 +33,7 @@ class Planner:
         log.log("PLANNER", "Calling Gemini to decompose goal", f"model={GEMINI_MODEL}")
 
         prompt = f"""Decompose the following goal into a list of subtasks.
-Each subtask must be assigned to one of these agent roles: researcher, coder, writer.
+Assign each subtask to whatever role makes sense for the work (e.g. researcher, coder, writer, data_analyzer, reviewer, etc.).
 Pre-built tools available: web_search, file_reader, code_executor.
 If a subtask requires a capability none of the pre-built tools provide, define a new custom tool 
 with a unique name and a clear description of what it should do in tool_definitions.
@@ -41,8 +41,8 @@ with a unique name and a clear description of what it should do in tool_definiti
 CRITICAL: Your entire response must be ONLY a valid JSON array. No markdown formatting, no code fences, no explanations, no preamble, no postscript. Start with '[' and end with ']'.
 
 Each item in the array has:
-- agent_id: unique identifier like "researcher_01", "coder_01", "writer_01"
-- role: one of "researcher", "coder", "writer"
+- agent_id: unique identifier (e.g. "researcher_01", "coder_01", "analyzer_01")
+- role: what kind of agent should handle this (anything you think fits)
 - goal: what this subtask should accomplish
 - tools: list of tool names (pre-built + custom tool names you define)
 - tool_definitions: object mapping custom tool names to their goals (e.g. {{"my_tool": "what my_tool does"}})
