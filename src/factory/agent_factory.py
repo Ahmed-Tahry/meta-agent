@@ -2,10 +2,10 @@ import yaml
 
 from src.agents.base import Agent
 from src.factory.prompt_builder import PromptBuilder
+from src.tools import tool_registry
 from src.tools.composer import ToolComposer
 from src.tools.generator import ToolGenerator
 from src.types.agent_spec import AgentSpec
-from src.tools import tool_registry
 
 
 def load_agent_configs(path: str = "config/agents.yaml") -> dict:
@@ -51,7 +51,9 @@ class AgentFactory:
 
         return resolved, unregistered
 
-    async def _generate_missing(self, names: list[str], goal: str, tool_defs: dict[str, str] | None = None) -> list:
+    async def _generate_missing(
+        self, names: list[str], goal: str, tool_defs: dict[str, str] | None = None
+    ) -> list:
         generated = []
         for name in names:
             tool_goal = (tool_defs or {}).get(name, goal)

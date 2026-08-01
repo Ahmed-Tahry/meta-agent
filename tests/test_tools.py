@@ -1,4 +1,5 @@
 import pytest
+
 from src.tools import Tool, ToolRegistry, tool_registry
 
 
@@ -11,6 +12,7 @@ def registry():
 def sample_tool():
     async def my_fn(query: str) -> str:
         return f"result for {query}"
+
     return Tool(name="test_tool", fn=my_fn, description="A test tool")
 
 
@@ -19,6 +21,7 @@ class TestTool:
     async def test_tool_run(self):
         async def fn(x: str) -> str:
             return f"hello {x}"
+
         tool = Tool(name="greet", fn=fn, description="greeting")
         result = await tool.run(x="world")
         assert result == "hello world"
@@ -39,8 +42,12 @@ class TestToolRegistry:
         assert registry.list_tools() == ["test_tool"]
 
     def test_get_multiple(self, registry):
-        async def fn1(): pass
-        async def fn2(): pass
+        async def fn1():
+            pass
+
+        async def fn2():
+            pass
+
         t1 = Tool(name="a", fn=fn1)
         t2 = Tool(name="b", fn=fn2)
         t3 = Tool(name="c", fn=fn1)
@@ -53,7 +60,10 @@ class TestToolRegistry:
 
     def test_overwrite_tool(self, registry, sample_tool):
         registry.register(sample_tool)
-        async def new_fn(): pass
+
+        async def new_fn():
+            pass
+
         new_tool = Tool(name="test_tool", fn=new_fn, description="overwritten")
         registry.register(new_tool)
         assert registry.get("test_tool") is new_tool

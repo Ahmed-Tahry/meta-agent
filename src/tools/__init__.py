@@ -1,7 +1,7 @@
 from collections.abc import Callable, Coroutine
 from typing import Any
 
-from langchain_core.tools import StructuredTool, BaseTool
+from langchain_core.tools import BaseTool, StructuredTool
 
 
 class Tool:
@@ -51,9 +51,9 @@ class ToolRegistry:
 tool_registry = ToolRegistry()
 
 
-from src.tools.prebuilt.web_search import tool_web_search
-from src.tools.prebuilt.file_reader import tool_file_reader
-from src.tools.prebuilt.code_executor import tool_code_executor
+from src.tools.prebuilt.code_executor import tool_code_executor  # noqa: E402 - circular import
+from src.tools.prebuilt.file_reader import tool_file_reader  # noqa: E402
+from src.tools.prebuilt.web_search import tool_web_search  # noqa: E402
 
 tool_registry.register(tool_web_search)
 tool_registry.register(tool_file_reader)

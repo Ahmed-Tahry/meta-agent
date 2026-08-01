@@ -1,7 +1,7 @@
 from src.config import SANDBOX_TIMEOUT
+from src.task_logger import get_current_logger
 from src.tools import Tool
 from src.tools.sandbox import Sandbox, SandboxError, SandboxExecutionError, SandboxTimeout
-from src.task_logger import get_current_logger
 
 _sandbox = Sandbox()
 _sandbox_built = False
@@ -30,16 +30,11 @@ async def code_executor(code: str, language: str = "python") -> str:
         except SandboxError as e:
             if log:
                 log.log("SANDBOX", "Failed to build sandbox image", str(e))
-            return (
-                f"Failed to build sandbox image. "
-                f"Code ({len(code)} chars) could not be executed."
-            )
+            return f"Failed to build sandbox image. Code ({len(code)} chars) could not be executed."
         except FileNotFoundError:
             if log:
                 log.log("SANDBOX", "Docker not available")
-            return (
-                "Docker is not available. Install Docker and start the daemon."
-            )
+            return "Docker is not available. Install Docker and start the daemon."
 
     try:
         result = await _sandbox.run(code, timeout=SANDBOX_TIMEOUT)

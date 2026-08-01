@@ -16,11 +16,11 @@ GOAL            |  i wanna know about quantum computers
     | Decompose the following goal into a list of subtasks.
     | Each subtask must be assigned to one of these agent roles: researcher, coder, writer.
     | Pre-built tools available: web_search, file_reader, code_executor.
-    | If a subtask requires a capability none of the pre-built tools provide, define a new custom tool 
+    | If a subtask requires a capability none of the pre-built tools provide, define a new custom tool
     | with a unique name and a clear description of what it should do in tool_definitions.
-    | 
+    |
     | CRITICAL: Your entire response must be ONLY a valid JSON array. No markdown formatting, no code fences, no explanations, no preamble, no postscript. Start with '[' and end with ']'.
-    | 
+    |
     | Each item in the array has:
     | - agent_id: unique identifier like "researcher_01", "coder_01", "writer_01"
     | - role: one of "researcher", "coder", "writer"
@@ -29,7 +29,7 @@ GOAL            |  i wanna know about quantum computers
     | - tool_definitions: object mapping custom tool names to their goals (e.g. {"my_tool": "what my_tool does"})
     | - depends_on: list of agent_ids this subtask depends on (empty list if none)
     | - output_format: "text" or "json"
-    | 
+    |
     | Goal: i wanna know about quantum computers
     ------------------------------------------------------------
 
@@ -210,7 +210,7 @@ GOAL            |  i wanna know about quantum computers
 
 --- [2026-06-06T10:30:53.029Z] AGENT ---
     coder_01 — tool result: code_executor
-    result (166 chars): 
+    result (166 chars):
     Traceback (most recent call last):
       File "/sandbox/script.py", line 2, in <module>
         from qiskit_aer import Aer

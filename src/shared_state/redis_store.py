@@ -45,7 +45,9 @@ class RedisStore:
         key = self._subtask_key(task_id, subtask_id)
         return await self._redis.hget(key, "status")
 
-    async def set_subtask_summary(self, task_id: str, subtask_id: str, summary: dict[str, Any]) -> None:
+    async def set_subtask_summary(
+        self, task_id: str, subtask_id: str, summary: dict[str, Any]
+    ) -> None:
         if not self._redis:
             return
         key = self._subtask_key(task_id, subtask_id)

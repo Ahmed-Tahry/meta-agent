@@ -3,3 +3,5 @@ plan.md
 __pycache__/
 *.egg-info/
 .venv/
+build/
+logs/

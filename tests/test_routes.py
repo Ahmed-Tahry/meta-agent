@@ -1,6 +1,7 @@
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
-from httpx import AsyncClient, ASGITransport
+from httpx import ASGITransport, AsyncClient
 
 from src.main import app
 
@@ -28,7 +29,7 @@ class TestRoutes:
         with patch("src.api.routes.orchestrator") as mock_orch:
             mock_orch.start = MagicMock()
 
-            response = await client.post("/run", json={"goal": "research competitors"})
+            await client.post("/run", json={"goal": "research competitors"})
             mock_orch.start.assert_called_once()
             args, _ = mock_orch.start.call_args
             assert args[0] == "research competitors"
@@ -84,11 +85,13 @@ class TestRoutes:
         ):
             mock_store.get_task_status = AsyncMock(return_value="running")
             mock_queue = AsyncMock()
-            mock_queue.get = AsyncMock(side_effect=[
-                {"event": "status", "data": {"status": "running"}},
-                {"event": "node", "data": {"node": "planner"}},
-                {"event": "complete", "data": {"result": "done"}},
-            ])
+            mock_queue.get = AsyncMock(
+                side_effect=[
+                    {"event": "status", "data": {"status": "running"}},
+                    {"event": "node", "data": {"node": "planner"}},
+                    {"event": "complete", "data": {"result": "done"}},
+                ]
+            )
             mock_bus.subscribe = MagicMock(return_value=mock_queue)
 
             async with client.stream("GET", "/tasks/task_01/stream") as response:

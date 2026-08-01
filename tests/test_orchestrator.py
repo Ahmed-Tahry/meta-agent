@@ -1,5 +1,6 @@
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock, ANY, call
 
 from src.meta_agent.orchestrator import Orchestrator
 
@@ -59,8 +60,12 @@ class TestOrchestrator:
             mock_planner_obj.decompose.assert_called_once_with("test goal", "task_01")
             mock_factory_obj.create_dynamic.assert_called_once_with(mock_subtask.agent_spec)
             mock_agent.run.assert_called_once_with("task_01", "find info", {})
-            mock_evaluator_obj.evaluate.assert_called_once_with("task_01", "researcher_01", "research results")
-            mock_synthesizer_obj.synthesize.assert_called_once_with("task_01", {"researcher_01": "research results"})
+            mock_evaluator_obj.evaluate.assert_called_once_with(
+                "task_01", "researcher_01", "research results"
+            )
+            mock_synthesizer_obj.synthesize.assert_called_once_with(
+                "task_01", {"researcher_01": "research results"}
+            )
 
     @pytest.mark.asyncio
     async def test_run_with_dependencies(self, orchestrator):

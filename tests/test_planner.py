@@ -1,9 +1,8 @@
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
 
 from src.meta_agent.planner import Planner
-from src.types.agent_spec import AgentSpec
-
 
 SAMPLE_RESPONSE = """
 [
@@ -102,4 +101,6 @@ class TestPlanner:
         with patch("src.meta_agent.planner.event_bus") as mock_bus:
             await planner.decompose("test", "task_01")
             assert mock_bus.emit.call_count == 2
-            mock_bus.emit.assert_any_call("task_01", "node", {"node": "planner", "status": "running"})
+            mock_bus.emit.assert_any_call(
+                "task_01", "node", {"node": "planner", "status": "running"}
+            )

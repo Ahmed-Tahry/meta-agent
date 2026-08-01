@@ -3,7 +3,6 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 
-
 # Load .env before any other imports that need env vars
 _env_path = Path(__file__).resolve().parents[1] / ".env"
 if _env_path.exists():
@@ -12,11 +11,12 @@ if _env_path.exists():
         if _line and not _line.startswith("#") and "=" in _line:
             _k, _v = _line.split("=", 1)
             import os
+
             os.environ.setdefault(_k, _v)
 
 
-from src.api.routes import router
-from src.shared_state.redis_store import store
+from src.api.routes import router  # noqa: E402 - after manual .env load
+from src.shared_state.redis_store import store  # noqa: E402
 
 app = FastAPI(title="Meta-Agent")
 app.include_router(router)

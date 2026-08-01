@@ -1,4 +1,3 @@
-import pytest
 from src.types.agent_spec import AgentSpec
 from src.types.task import Subtask, Task
 

@@ -16,11 +16,11 @@ GOAL            |  calculate the first 20 prime numbers, multiply each by pi, an
     | Decompose the following goal into a list of subtasks.
     | Assign each subtask to whatever role makes sense for the work (e.g. researcher, coder, writer, data_analyzer, reviewer, etc.).
     | Pre-built tools available: web_search, file_reader, code_executor.
-    | If a subtask requires a capability none of the pre-built tools provide, define a new custom tool 
+    | If a subtask requires a capability none of the pre-built tools provide, define a new custom tool
     | with a unique name and a clear description of what it should do in tool_definitions.
-    | 
+    |
     | CRITICAL: Your entire response must be ONLY a valid JSON array. No markdown formatting, no code fences, no explanations, no preamble, no postscript. Start with '[' and end with ']'.
-    | 
+    |
     | Each item in the array has:
     | - agent_id: unique identifier (e.g. "researcher_01", "coder_01", "analyzer_01")
     | - role: what kind of agent should handle this (anything you think fits)
@@ -29,7 +29,7 @@ GOAL            |  calculate the first 20 prime numbers, multiply each by pi, an
     | - tool_definitions: object mapping custom tool names to their goals (e.g. {"my_tool": "what my_tool does"})
     | - depends_on: list of agent_ids this subtask depends on (empty list if none)
     | - output_format: "text" or "json"
-    | 
+    |
     | Goal: calculate the first 20 prime numbers, multiply each by pi, and return them as a JSON array
     ------------------------------------------------------------
 
@@ -288,20 +288,20 @@ GOAL            |  calculate the first 20 prime numbers, multiply each by pi, an
     Final result:
     ------------------------------------------------------------
     | # Research Report: Prime Multiplication by Pi
-    | 
+    |
     | This report summarizes the computation and verification of the first 20 prime numbers multiplied by the mathematical constant $\pi$.
-    | 
+    |
     | ## Overview
     | The objective was to generate the first 20 prime numbers and calculate the product of each prime ($p$) with $\pi$. Both the computational logic and the symbolic verification confirm consistent results.
-    | 
+    |
     | ## Methodology
     | 1.  **Prime Generation:** A Python function was employed to identify the first 20 prime numbers, starting from 2.
     | 2.  **Calculation:** Each identified prime was multiplied by `math.pi`.
     | 3.  **Validation:** The outputs were verified against their symbolic representations ($p \times \pi$).
-    | 
+    |
     | ## Results
     | The following table summarizes the first 20 primes and their corresponding values when multiplied by $\pi$:
-    | 
+    |
     | | Prime ($p$) | Product ($p \times \pi$) |
     | | :--- | :--- |
     | | 2 | 6.283185307179586 |
@@ -324,7 +324,7 @@ GOAL            |  calculate the first 20 prime numbers, multiply each by pi, an
     | | 61 | 191.63715186897738 |
     | | 67 | 210.48670779051614 |
     | | 71 | 223.05307840487532 |
-    | 
+    |
     | ## Conclusion
     | The computational logic is valid and accurately maps the first 20 prime numbers to their product with $\pi$. No errors were detected in the generation or transformation process.
     ------------------------------------------------------------

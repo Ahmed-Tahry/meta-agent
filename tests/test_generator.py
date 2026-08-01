@@ -4,7 +4,6 @@ from src.tools import Tool
 from src.tools.generator import ToolGenerator
 from src.tools.sandbox import SandboxExecutionError, SandboxTimeout
 
-
 SAMPLE_CODE = """\
 async def my_tool(input_text: str) -> str:
     return f"Processed: {input_text}"
@@ -19,6 +18,7 @@ def mock_llm(mocker):
         msg.content = response_text
         mock.ainvoke = mocker.AsyncMock(return_value=msg)
         return mock
+
     return _make
 
 
@@ -78,7 +78,9 @@ class TestLLMGenerate:
     async def test_llm_generate_includes_error_feedback(self, mock_llm, mock_sandbox):
         llm = mock_llm(SAMPLE_CODE)
         gen = ToolGenerator(sandbox=mock_sandbox, llm=llm)
-        await gen._llm_generate("my_tool", "Do something", error_feedback="NameError: x not defined")
+        await gen._llm_generate(
+            "my_tool", "Do something", error_feedback="NameError: x not defined"
+        )
         call_args = llm.ainvoke.call_args[0][0]
         combined = " ".join(m.content for m in call_args)
         assert "NameError" in combined
@@ -124,7 +126,6 @@ class TestGenerate:
     @pytest.mark.asyncio
     async def test_generate_retry_then_success(self, mocker, mock_llm, mock_sandbox):
         bad_code = "async def my_tool(input_text: str) -> str:\n    return x"
-        llm_calls = [bad_code, SAMPLE_CODE]
         llm = mock_llm("")
         llm.ainvoke = mocker.AsyncMock()
         llm.ainvoke.side_effect = [

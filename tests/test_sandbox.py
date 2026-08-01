@@ -1,7 +1,8 @@
 import asyncio
+
 import pytest
 
-from src.tools.sandbox import Sandbox, SandboxError, SandboxTimeout, SandboxExecutionError
+from src.tools.sandbox import Sandbox, SandboxError, SandboxExecutionError, SandboxTimeout
 
 
 @pytest.fixture

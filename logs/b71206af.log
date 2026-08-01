@@ -16,11 +16,11 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     | Decompose the following goal into a list of subtasks.
     | Assign each subtask to whatever role makes sense for the work (e.g. researcher, coder, writer, data_analyzer, reviewer, etc.).
     | Pre-built tools available: web_search, file_reader, code_executor.
-    | If a subtask requires a capability none of the pre-built tools provide, define a new custom tool 
+    | If a subtask requires a capability none of the pre-built tools provide, define a new custom tool
     | with a unique name and a clear description of what it should do in tool_definitions.
-    | 
+    |
     | CRITICAL: Your entire response must be ONLY a valid JSON array. No markdown formatting, no code fences, no explanations, no preamble, no postscript. Start with '[' and end with ']'.
-    | 
+    |
     | Each item in the array has:
     | - agent_id: unique identifier (e.g. "researcher_01", "coder_01", "analyzer_01")
     | - role: what kind of agent should handle this (anything you think fits)
@@ -29,7 +29,7 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     | - tool_definitions: object mapping custom tool names to their goals (e.g. {"my_tool": "what my_tool does"})
     | - depends_on: list of agent_ids this subtask depends on (empty list if none)
     | - output_format: "text" or "json"
-    | 
+    |
     | Goal: research how much energy bitcoin mining consumes globally, write a python script that estimates its annual carbon footprint using the current hashrate and average grid emission factors, then produce a balanced summary of the debate around crypto's environmental impact
     ------------------------------------------------------------
 
@@ -294,26 +294,26 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     Agent writer_01 final output (3292 chars):
     ------------------------------------------------------------
     | ### The Environmental Debate: Bitcoin’s Energy Footprint
-    | 
+    |
     | The rapid ascent of Bitcoin has sparked a polarized debate regarding its environmental sustainability. At the core of the conflict is the "Proof of Work" (PoW) consensus mechanism, which requires vast computational power to secure the network, contrasted against the evolving potential for Bitcoin mining to interact with energy markets.
-    | 
+    |
     | #### The Case for Environmental Impact (Negatives)
     | Critics emphasize the high energy intensity required to maintain the Bitcoin network. Because mining is a competitive process, miners are incentivized to utilize as much computational power as possible, leading to significant electricity consumption.
-    | 
+    |
     | *   **High Absolute Consumption:** Estimates frequently compare Bitcoin’s annual energy demand to that of mid-sized nations. Critics argue this represents a massive, non-productive use of electricity that contributes to global carbon emissions.
     | *   **E-Waste Concerns:** Specialized mining hardware (ASICs) becomes obsolete quickly. This rapid turnover creates substantial electronic waste, which often contains hazardous materials that are difficult to recycle.
     | *   **Carbon Intensity:** In regions where the power grid relies heavily on fossil fuels, Bitcoin mining directly increases the demand for coal and natural gas, exacerbating climate change impacts.
-    | 
+    |
     | #### The Case for Grid Optimization (Positives)
     | Proponents argue that the criticism overlooks the unique operational characteristics of Bitcoin mining, which they claim can be leveraged to support a greener energy grid.
-    | 
+    |
     | *   **Renewable Energy Absorption:** Miners are incentivized to seek the lowest-cost energy, which is increasingly found in excess renewable capacity (e.g., stranded hydro or solar). By acting as a "buyer of last resort," miners can make renewable projects economically viable that would otherwise be rejected by investors.
     | *   **Grid Stabilization:** Bitcoin mining operations can be instantly throttled. This flexibility allows miners to act as a "demand response" tool; they can shut down during peak grid stress to prevent brownouts and resume operations when renewable generation exceeds demand, effectively acting as a grid balancer.
     | *   **Methane Mitigation:** Emerging initiatives use stranded natural gas—a potent greenhouse gas—to power mobile mining units. By capturing this gas at wellheads to generate electricity, miners can reduce methane emissions that would otherwise be vented or flared directly into the atmosphere.
-    | 
+    |
     | #### Synthesis and Conclusion
-    | The environmental impact of Bitcoin is not a binary issue, but rather a function of *where* and *how* the electricity is sourced. 
-    | 
+    | The environmental impact of Bitcoin is not a binary issue, but rather a function of *where* and *how* the electricity is sourced.
+    |
     | While the energy intensity of the network is objectively high, the industry is transitioning toward greater transparency and renewable adoption. The debate highlights a fundamental tension: Bitcoin can function as a significant environmental burden if powered by carbon-intensive grids, yet it also holds potential as a financial tool to subsidize renewable infrastructure and provide grid stability. Ultimately, the industry’s environmental legacy will be determined by its ability to decouple its growth from carbon-intensive energy sources and demonstrate measurable contributions to energy transition goals.
     ------------------------------------------------------------
 
@@ -321,26 +321,26 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     Subtask writer_01 produced output (3292 chars):
     ------------------------------------------------------------
     | ### The Environmental Debate: Bitcoin’s Energy Footprint
-    | 
+    |
     | The rapid ascent of Bitcoin has sparked a polarized debate regarding its environmental sustainability. At the core of the conflict is the "Proof of Work" (PoW) consensus mechanism, which requires vast computational power to secure the network, contrasted against the evolving potential for Bitcoin mining to interact with energy markets.
-    | 
+    |
     | #### The Case for Environmental Impact (Negatives)
     | Critics emphasize the high energy intensity required to maintain the Bitcoin network. Because mining is a competitive process, miners are incentivized to utilize as much computational power as possible, leading to significant electricity consumption.
-    | 
+    |
     | *   **High Absolute Consumption:** Estimates frequently compare Bitcoin’s annual energy demand to that of mid-sized nations. Critics argue this represents a massive, non-productive use of electricity that contributes to global carbon emissions.
     | *   **E-Waste Concerns:** Specialized mining hardware (ASICs) becomes obsolete quickly. This rapid turnover creates substantial electronic waste, which often contains hazardous materials that are difficult to recycle.
     | *   **Carbon Intensity:** In regions where the power grid relies heavily on fossil fuels, Bitcoin mining directly increases the demand for coal and natural gas, exacerbating climate change impacts.
-    | 
+    |
     | #### The Case for Grid Optimization (Positives)
     | Proponents argue that the criticism overlooks the unique operational characteristics of Bitcoin mining, which they claim can be leveraged to support a greener energy grid.
-    | 
+    |
     | *   **Renewable Energy Absorption:** Miners are incentivized to seek the lowest-cost energy, which is increasingly found in excess renewable capacity (e.g., stranded hydro or solar). By acting as a "buyer of last resort," miners can make renewable projects economically viable that would otherwise be rejected by investors.
     | *   **Grid Stabilization:** Bitcoin mining operations can be instantly throttled. This flexibility allows miners to act as a "demand response" tool; they can shut down during peak grid stress to prevent brownouts and resume operations when renewable generation exceeds demand, effectively acting as a grid balancer.
     | *   **Methane Mitigation:** Emerging initiatives use stranded natural gas—a potent greenhouse gas—to power mobile mining units. By capturing this gas at wellheads to generate electricity, miners can reduce methane emissions that would otherwise be vented or flared directly into the atmosphere.
-    | 
+    |
     | #### Synthesis and Conclusion
-    | The environmental impact of Bitcoin is not a binary issue, but rather a function of *where* and *how* the electricity is sourced. 
-    | 
+    | The environmental impact of Bitcoin is not a binary issue, but rather a function of *where* and *how* the electricity is sourced.
+    |
     | While the energy intensity of the network is objectively high, the industry is transitioning toward greater transparency and renewable adoption. The debate highlights a fundamental tension: Bitcoin can function as a significant environmental burden if powered by carbon-intensive grids, yet it also holds potential as a financial tool to subsidize renewable infrastructure and provide grid stability. Ultimately, the industry’s environmental legacy will be determined by its ability to decouple its growth from carbon-intensive energy sources and demonstrate measurable contributions to energy transition goals.
     ------------------------------------------------------------
 

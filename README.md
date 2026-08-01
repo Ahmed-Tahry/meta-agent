@@ -77,6 +77,21 @@ curl http://localhost:8000/tasks/abc12345
 # → {"task_id": "...", "goal": "...", "status": "done", "result": "..."}
 ```
 
+## Run with Docker
+
+```bash
+docker compose up --build
+```
+
+- App: http://localhost:8000 (dashboard at `/` or `/dashboard`)
+- Redis runs as a sidecar container (healthchecked; the app waits for it)
+- `GEMINI_API_KEY` is read from `.env` via `env_file`
+- The app container mounts the host Docker socket (`:ro`) — the sandbox builds images and runs code through the **host** daemon. The socket mount is root-equivalent on the host
+- Sandbox scripts are passed via the `meta-agent-sandbox-tmp` named volume (`SANDBOX_MOUNT` env); per-task logs land in the `logs-data` volume at `/app/logs`
+- uvicorn runs as a single non-root worker — the SSE event bus is in-memory, so the app must not be scaled
+
+Stop with `docker compose down` (add `-v` to also drop the volumes).
+
 ## Stack
 
 | Component | Choice |
@@ -189,4 +204,3 @@ Tests set `GEMINI_API_KEY=test-key` automatically. Integration tests are skipped
 ## Roadmap
 
 - **Week 5** Evaluation loop with autonomous refinement (not yet implemented)
-

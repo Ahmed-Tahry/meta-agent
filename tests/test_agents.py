@@ -1,6 +1,6 @@
-import pytest
-from unittest.mock import AsyncMock, patch, MagicMock, PropertyMock
+from unittest.mock import AsyncMock, MagicMock
 
+import pytest
 from langchain_core.messages import HumanMessage
 
 from src.agents.base import Agent
@@ -11,6 +11,7 @@ from src.tools import Tool
 def sample_tools():
     async def search(q: str) -> str:
         return f"searched {q}"
+
     return [
         Tool(name="web_search", fn=search, description="search web"),
     ]
@@ -76,10 +77,8 @@ class TestAgent:
 class TestAgentSubclasses:
     def test_agent_is_used_for_any_role(self):
         from src.factory.agent_factory import AgentFactory
-        from src.types.agent_spec import AgentSpec
 
         factory = AgentFactory()
         for role in ["researcher", "coder", "writer", "data_analyzer", "reviewer"]:
-            spec = AgentSpec(agent_id=f"{role}_01", role=role, goal="test")
             agent = factory._resolve_agent_cls(role)
             assert agent is Agent

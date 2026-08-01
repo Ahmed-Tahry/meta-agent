@@ -1,5 +1,6 @@
+from unittest.mock import AsyncMock, patch
+
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
 
 from src.meta_agent.synthesizer import Synthesizer
 
@@ -13,7 +14,7 @@ class TestSynthesizer:
     async def test_synthesize_merges_outputs(self, synthesizer):
         with (
             patch("src.meta_agent.synthesizer.store") as mock_store,
-            patch("src.meta_agent.synthesizer.event_bus") as mock_bus,
+            patch("src.meta_agent.synthesizer.event_bus"),
         ):
             mock_store.set_result = AsyncMock()
 
@@ -32,7 +33,7 @@ class TestSynthesizer:
     async def test_synthesize_single_agent(self, synthesizer):
         with (
             patch("src.meta_agent.synthesizer.store") as mock_store,
-            patch("src.meta_agent.synthesizer.event_bus") as mock_bus,
+            patch("src.meta_agent.synthesizer.event_bus"),
         ):
             mock_store.set_result = AsyncMock()
 
@@ -44,7 +45,7 @@ class TestSynthesizer:
     async def test_synthesize_stores_result(self, synthesizer):
         with (
             patch("src.meta_agent.synthesizer.store") as mock_store,
-            patch("src.meta_agent.synthesizer.event_bus") as mock_bus,
+            patch("src.meta_agent.synthesizer.event_bus"),
         ):
             mock_store.set_result = AsyncMock()
 
@@ -68,7 +69,7 @@ class TestSynthesizer:
     async def test_synthesize_empty_outputs(self, synthesizer):
         with (
             patch("src.meta_agent.synthesizer.store") as mock_store,
-            patch("src.meta_agent.synthesizer.event_bus") as mock_bus,
+            patch("src.meta_agent.synthesizer.event_bus"),
         ):
             mock_store.set_result = AsyncMock()
 

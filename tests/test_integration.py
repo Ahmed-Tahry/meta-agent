@@ -1,4 +1,5 @@
 import os
+
 import pytest
 
 from src.agents.base import Agent
@@ -6,8 +7,7 @@ from src.factory.agent_factory import AgentFactory
 from src.tools import tool_registry
 
 REAL_API_KEY_SET = (
-    os.environ.get("GEMINI_API_KEY")
-    and os.environ.get("GEMINI_API_KEY") != "test-key"
+    os.environ.get("GEMINI_API_KEY") and os.environ.get("GEMINI_API_KEY") != "test-key"
 )
 
 pytestmark = pytest.mark.skipif(
@@ -19,6 +19,7 @@ pytestmark = pytest.mark.skipif(
 @pytest.fixture
 def configs():
     from src.factory.agent_factory import load_agent_configs
+
     return load_agent_configs()
 
 
@@ -41,13 +42,15 @@ class TestAgentIntegration:
         result = await agent.run(
             task_id="int_test_res",
             goal="Research the benefits of renewable energy sources like solar "
-                 "and wind power. Provide a concise summary of at least 3 key benefits.",
+            "and wind power. Provide a concise summary of at least 3 key benefits.",
             shared_state={},
         )
 
         assert isinstance(result, str)
         assert len(result) > 50
-        assert any(word in result.lower() for word in ["energy", "solar", "renewable", "wind", "power"])
+        assert any(
+            word in result.lower() for word in ["energy", "solar", "renewable", "wind", "power"]
+        )
 
     @pytest.mark.asyncio
     async def test_agent_appends_to_message_history(self, agent_factory, configs):
@@ -81,7 +84,7 @@ class TestAgentIntegration:
         result = await agent.run(
             task_id="int_test_code",
             goal="Write a Python function called `calculate_average` that takes "
-                 "a list of numbers and returns the average. Include a docstring.",
+            "a list of numbers and returns the average. Include a docstring.",
             shared_state={},
         )
 
@@ -119,7 +122,7 @@ class TestAgentIntegration:
         result = await agent.run(
             task_id="int_test_write",
             goal="Write a short paragraph (3-5 sentences) explaining why "
-                 "regular exercise is important for physical and mental health.",
+            "regular exercise is important for physical and mental health.",
             shared_state={},
         )
 
@@ -137,9 +140,7 @@ class TestAgentIntegration:
             tools=tools,
         )
 
-        shared = {
-            "researcher_01": {"output": "Wind and solar are the cheapest energy sources."}
-        }
+        shared = {"researcher_01": {"output": "Wind and solar are the cheapest energy sources."}}
 
         result = await agent.run(
             task_id="int_test_write_shared",

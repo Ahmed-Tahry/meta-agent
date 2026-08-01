@@ -7,9 +7,8 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 
 from src.event_bus.bus import event_bus
-from src.shared_state.redis_store import store
 from src.meta_agent.orchestrator import orchestrator
-
+from src.shared_state.redis_store import store
 
 router = APIRouter()
 

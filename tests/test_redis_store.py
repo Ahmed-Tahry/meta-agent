@@ -1,5 +1,6 @@
+from unittest.mock import AsyncMock, patch
+
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
 
 from src.shared_state.redis_store import RedisStore
 
@@ -23,7 +24,9 @@ def store(mock_redis):
 class TestRedisStore:
     @pytest.mark.asyncio
     async def test_connect(self, mock_redis):
-        with patch("src.shared_state.redis_store.aioredis.from_url", new_callable=AsyncMock) as from_url:
+        with patch(
+            "src.shared_state.redis_store.aioredis.from_url", new_callable=AsyncMock
+        ) as from_url:
             from_url.return_value = mock_redis
             s = RedisStore()
             await s.connect()
@@ -53,6 +56,7 @@ class TestRedisStore:
         await store.set_subtask_summary("task_01", "sub_01", summary)
 
         import json
+
         mock_redis.hget.return_value = json.dumps(summary)
         result = await store.get_subtask_summary("task_01", "sub_01")
         assert result == summary
@@ -69,6 +73,7 @@ class TestRedisStore:
         await store.set_result("task_01", result_data)
 
         import json
+
         mock_redis.hget.return_value = json.dumps(result_data)
         result = await store.get_result("task_01")
         assert result == result_data

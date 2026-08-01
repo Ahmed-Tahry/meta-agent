@@ -1,16 +1,17 @@
+# ruff: noqa: E501 - prompt template lines kept long on purpose
 import json
 import re
 from typing import Any
 
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 from src.config import GEMINI_API_KEY, GEMINI_MODEL, LLM_TIMEOUT
-from src.types.agent_spec import AgentSpec
-from src.types.task import Subtask
 from src.event_bus.bus import event_bus
 from src.shared_state.redis_store import store
 from src.task_logger import get_logger
+from src.types.agent_spec import AgentSpec
+from src.types.task import Subtask
 
 
 class Planner:
@@ -35,7 +36,7 @@ class Planner:
         prompt = f"""Decompose the following goal into a list of subtasks.
 Assign each subtask to whatever role makes sense for the work (e.g. researcher, coder, writer, data_analyzer, reviewer, etc.).
 Pre-built tools available: web_search, file_reader, code_executor.
-If a subtask requires a capability none of the pre-built tools provide, define a new custom tool 
+If a subtask requires a capability none of the pre-built tools provide, define a new custom tool
 with a unique name and a clear description of what it should do in tool_definitions.
 
 CRITICAL: Your entire response must be ONLY a valid JSON array. No markdown formatting, no code fences, no explanations, no preamble, no postscript. Start with '[' and end with ']'.
@@ -66,8 +67,10 @@ Goal: {goal}"""
         elif isinstance(response.content, list):
             # extract text from content blocks
             raw = "\n".join(
-                block["text"] if isinstance(block, dict) and "text" in block
-                else block.text if hasattr(block, "text")
+                block["text"]
+                if isinstance(block, dict) and "text" in block
+                else block.text
+                if hasattr(block, "text")
                 else ""
                 for block in response.content
             ).strip()
@@ -78,13 +81,20 @@ Goal: {goal}"""
 
         subtasks_data = self._parse_response(raw)
         if not subtasks_data:
-            log.log("PLANNER", "Failed to parse Gemini response as JSON",
-                f"response preview: {raw[:300]}")
-            event_bus.emit(task_id, "error", {
-                "node": "planner",
-                "message": "Failed to parse planner JSON output",
-                "raw": raw,
-            })
+            log.log(
+                "PLANNER",
+                "Failed to parse Gemini response as JSON",
+                f"response preview: {raw[:300]}",
+            )
+            event_bus.emit(
+                task_id,
+                "error",
+                {
+                    "node": "planner",
+                    "message": "Failed to parse planner JSON output",
+                    "raw": raw,
+                },
+            )
         else:
             log.log("PLANNER", f"Parsed {len(subtasks_data)} subtask(s) from JSON")
 
@@ -106,23 +116,41 @@ Goal: {goal}"""
             )
             subtasks.append(subtask)
 
-        plan_detail = "\n".join(
-            f"  [{s.subtask_id}] role={s.agent_spec.role}  goal={s.agent_spec.goal}  "
-            f"tools={s.agent_spec.tools}  output_format={s.agent_spec.output_format}"
-            for s in subtasks
-        ) if subtasks else "  (no subtasks)"
+        plan_detail = (
+            "\n".join(
+                f"  [{s.subtask_id}] role={s.agent_spec.role}  goal={s.agent_spec.goal}  "
+                f"tools={s.agent_spec.tools}  output_format={s.agent_spec.output_format}"
+                for s in subtasks
+            )
+            if subtasks
+            else "  (no subtasks)"
+        )
         log.log_multiline("PLANNER", f"Final plan ({len(subtasks)} subtasks):", plan_detail)
 
-        await store.append_trace(task_id, {
-            "type": "plan",
-            "subtasks": [{"agent_id": s.agent_spec.agent_id, "goal": s.agent_spec.goal, "depends_on": s.depends_on} for s in subtasks],
-        })
+        await store.append_trace(
+            task_id,
+            {
+                "type": "plan",
+                "subtasks": [
+                    {
+                        "agent_id": s.agent_spec.agent_id,
+                        "goal": s.agent_spec.goal,
+                        "depends_on": s.depends_on,
+                    }
+                    for s in subtasks
+                ],
+            },
+        )
 
-        event_bus.emit(task_id, "node", {
-            "node": "planner",
-            "status": "done",
-            "output": [s.agent_spec.agent_id for s in subtasks],
-        })
+        event_bus.emit(
+            task_id,
+            "node",
+            {
+                "node": "planner",
+                "status": "done",
+                "output": [s.agent_spec.agent_id for s in subtasks],
+            },
+        )
         return subtasks
 
     def _parse_response(self, content: str) -> list[dict[str, Any]]:
@@ -142,21 +170,21 @@ Goal: {goal}"""
         candidates = []
 
         # 1) code fence block
-        m = re.search(r'```(?:json)?\s*(.*?)```', content, re.DOTALL)
+        m = re.search(r"```(?:json)?\s*(.*?)```", content, re.DOTALL)
         if m:
             candidates.append(m.group(1).strip())
 
         # 2) bracket-balanced [ … ] extraction
-        start = content.find('[')
+        start = content.find("[")
         if start != -1:
             depth = 0
             for i, ch in enumerate(content[start:], start):
-                if ch == '[':
+                if ch == "[":
                     depth += 1
-                elif ch == ']':
+                elif ch == "]":
                     depth -= 1
                     if depth == 0:
-                        candidates.append(content[start:i + 1])
+                        candidates.append(content[start : i + 1])
                         break
 
         # 3) whole string as fallback

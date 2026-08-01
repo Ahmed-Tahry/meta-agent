@@ -1,7 +1,7 @@
 import asyncio
+import json
 import os
 import sys
-import json
 import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
@@ -16,10 +16,9 @@ if os.path.exists(env_path):
                 k, v = line.split("=", 1)
                 os.environ.setdefault(k, v)
 
-from src.meta_agent.orchestrator import orchestrator
-from src.shared_state.redis_store import store
-from src.tools import tool_registry
-
+from src.meta_agent.orchestrator import orchestrator  # noqa: E402 - after manual .env load
+from src.shared_state.redis_store import store  # noqa: E402
+from src.tools import tool_registry  # noqa: E402
 
 GOAL = (
     "Count how many vowels are in the string 'hello world custom tool test'. "
@@ -53,7 +52,7 @@ async def main():
         await asyncio.sleep(2)
 
     result = await store.get_result(task_id)
-    print(f"\n=== FINAL RESULT ===")
+    print("\n=== FINAL RESULT ===")
     print(result)
     print()
 

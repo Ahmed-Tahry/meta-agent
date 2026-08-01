@@ -1,12 +1,11 @@
 from typing import Any
 
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 from src.config import GEMINI_API_KEY, GEMINI_MODEL, LLM_TIMEOUT, SANDBOX_TIMEOUT, TOOL_GEN_RETRIES
 from src.tools import Tool
 from src.tools.sandbox import Sandbox, SandboxError, SandboxExecutionError, SandboxTimeout
-
 
 GENERATION_PROMPT = """\
 Write a Python async function named {tool_name} that accomplishes:
@@ -74,11 +73,16 @@ class ToolGenerator:
         return self._fallback_tool(tool_name, goal, last_error)
 
     async def _llm_generate(
-        self, tool_name: str, goal: str, error_feedback: str = "",
+        self,
+        tool_name: str,
+        goal: str,
+        error_feedback: str = "",
     ) -> str:
         feedback = ""
         if error_feedback:
-            feedback = f"\nPrevious attempt failed with:\n{error_feedback}\nFix the issue and try again."
+            feedback = (
+                f"\nPrevious attempt failed with:\n{error_feedback}\nFix the issue and try again."
+            )
 
         prompt = GENERATION_PROMPT.format(
             tool_name=tool_name,
@@ -96,8 +100,10 @@ class ToolGenerator:
             content = response.content
         elif isinstance(response.content, list):
             content = "\n".join(
-                block.get("text", "") if isinstance(block, dict)
-                else block.text if hasattr(block, "text")
+                block.get("text", "")
+                if isinstance(block, dict)
+                else block.text
+                if hasattr(block, "text")
                 else str(block)
                 for block in response.content
             ).strip()
@@ -130,6 +136,7 @@ class ToolGenerator:
 
         async def fn(input_text: str) -> str:
             from src.task_logger import get_current_logger
+
             log = get_current_logger()
 
             harness = f"""\
@@ -144,30 +151,28 @@ async def main():
 asyncio.run(main())
 """
             if log:
-                log.log("SANDBOX",
+                log.log(
+                    "SANDBOX",
                     f"Generated tool '{tool_name}' executing in sandbox",
-                    f"input ({len(input_text)} chars): {input_text[:200]}")
+                    f"input ({len(input_text)} chars): {input_text[:200]}",
+                )
             try:
                 result = await sandbox.run(harness, timeout=timeout)
                 if log:
-                    log.log("SANDBOX",
-                        f"Generated tool '{tool_name}' output ({len(result)} chars)")
+                    log.log("SANDBOX", f"Generated tool '{tool_name}' output ({len(result)} chars)")
                 return result.strip() or "(no output)"
             except SandboxTimeout:
                 if log:
-                    log.log("SANDBOX",
-                        f"Generated tool '{tool_name}' timed out ({timeout}s)")
+                    log.log("SANDBOX", f"Generated tool '{tool_name}' timed out ({timeout}s)")
                 return f"Tool execution timed out after {timeout}s."
             except SandboxExecutionError as e:
                 err = e.stderr or e.stdout or "Execution failed"
                 if log:
-                    log.log("SANDBOX",
-                        f"Generated tool '{tool_name}' execution error", err)
+                    log.log("SANDBOX", f"Generated tool '{tool_name}' execution error", err)
                 return err
             except SandboxError as e:
                 if log:
-                    log.log("SANDBOX",
-                        f"Generated tool '{tool_name}' sandbox error", str(e))
+                    log.log("SANDBOX", f"Generated tool '{tool_name}' sandbox error", str(e))
                 return f"Sandbox error: {e}"
             except FileNotFoundError:
                 if log:
@@ -182,4 +187,5 @@ asyncio.run(main())
                 f"Failed to generate tool '{tool_name}' for goal: {goal}\n"
                 f"After {TOOL_GEN_RETRIES} attempt(s), last error:\n{last_error}"
             )
+
         return Tool(name=tool_name, fn=error_fn, description=goal)

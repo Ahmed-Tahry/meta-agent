@@ -1,5 +1,5 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 from src.config import GEMINI_API_KEY, GEMINI_MODEL, LLM_TIMEOUT
 from src.types.agent_spec import AgentSpec
@@ -25,7 +25,8 @@ class PromptBuilder:
 
         prompt = (
             "Create a concise system prompt for an autonomous agent.\n"
-            "The prompt must include objective, constraints, output format, and tool usage guidance.\n\n"
+            "The prompt must include objective, constraints, output format, and tool "
+            "usage guidance.\n\n"
             f"Role: {spec.role}\n"
             f"Goal: {spec.goal}\n"
             f"Tools: {', '.join(spec.tools) if spec.tools else 'none'}\n"
@@ -44,8 +45,10 @@ class PromptBuilder:
             content = response.content
         elif isinstance(response.content, list):
             content = "\n".join(
-                block.get("text", "") if isinstance(block, dict)
-                else block.text if hasattr(block, "text")
+                block.get("text", "")
+                if isinstance(block, dict)
+                else block.text
+                if hasattr(block, "text")
                 else str(block)
                 for block in response.content
             ).strip()
@@ -67,6 +70,7 @@ class PromptBuilder:
             f"Available tools: {tools}\n"
             f"Constraints: {constraints}\n"
             f"Required output format: {spec.output_format}\n"
-            "If tools do not provide useful data, produce the best possible answer from available context"
+            "If tools do not provide useful data, produce the best possible answer "
+            "from available context"
             " and clearly state assumptions instead of returning an empty response."
         )

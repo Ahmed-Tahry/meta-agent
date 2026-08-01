@@ -4,22 +4,21 @@ from src.tools import Tool
 
 _API_URL = "https://en.wikipedia.org/w/api.php"
 _HEADERS = {
-    "User-Agent": (
-        "MetaAgent/1.0 (https://github.com/meta-agent; "
-        "ahmed@example.com) "
-        "httpx/0.28"
-    ),
+    "User-Agent": ("MetaAgent/1.0 (https://github.com/meta-agent; ahmed@example.com) httpx/0.28"),
 }
 
 
 async def _search(client: httpx.AsyncClient, query: str, max_results: int) -> list[dict] | str:
-    resp = await client.get(_API_URL, params={
-        "action": "query",
-        "list": "search",
-        "srsearch": query,
-        "srlimit": max_results,
-        "format": "json",
-    })
+    resp = await client.get(
+        _API_URL,
+        params={
+            "action": "query",
+            "list": "search",
+            "srsearch": query,
+            "srlimit": max_results,
+            "format": "json",
+        },
+    )
     if resp.status_code == 403:
         return f"Wikipedia search blocked for '{query}' (403). Try again later."
     resp.raise_for_status()
@@ -28,15 +27,18 @@ async def _search(client: httpx.AsyncClient, query: str, max_results: int) -> li
 
 
 async def _extracts(client: httpx.AsyncClient, titles: list[str], max_results: int) -> dict:
-    resp = await client.get(_API_URL, params={
-        "action": "query",
-        "titles": "|".join(titles),
-        "prop": "extracts",
-        "exintro": 1,
-        "explaintext": 1,
-        "exlimit": max_results,
-        "format": "json",
-    })
+    resp = await client.get(
+        _API_URL,
+        params={
+            "action": "query",
+            "titles": "|".join(titles),
+            "prop": "extracts",
+            "exintro": 1,
+            "explaintext": 1,
+            "exlimit": max_results,
+            "format": "json",
+        },
+    )
     if resp.status_code == 403:
         return {}
     resp.raise_for_status()
@@ -64,7 +66,13 @@ async def web_search(query: str, max_results: int = 5) -> str:
         page_id = str(page["pageid"])
         page_info = pages_map.get(page_id, {})
         extract = page_info.get("extract", "")
-        snippet = extract[:500] if extract else page.get("snippet", "").replace("<span class=\"searchmatch\">", "").replace("</span>", "")
+        snippet = (
+            extract[:500]
+            if extract
+            else page.get("snippet", "")
+            .replace('<span class="searchmatch">', "")
+            .replace("</span>", "")
+        )
         url = f"https://en.wikipedia.org/wiki/{page['title'].replace(' ', '_')}"
         lines.append(f"Result {i}: {page['title']}")
         lines.append(f"  URL: {url}")

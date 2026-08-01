@@ -6,6 +6,37 @@ services:
     volumes:
       - redis-data:/data
     command: redis-server --appendonly yes --appendfsync everysec
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      SANDBOX_MOUNT: meta-agent-sandbox-tmp:/sandbox-shared
+      SANDBOX_DOCKERFILE_DIR: /app/docker
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - meta-agent-sandbox-tmp:/sandbox-shared
+      - logs-data:/app/logs
+    init: true
+    security_opt:
+      - no-new-privileges:true
+    group_add:
+      - "${DOCKER_GID:-125}"
+    restart: unless-stopped
 
 volumes:
   redis-data:
+  meta-agent-sandbox-tmp:
+    name: meta-agent-sandbox-tmp
+  logs-data:

@@ -1,16 +1,15 @@
 import asyncio
 from typing import Any
 
-from src.types.task import Subtask
-from src.types.agent_spec import AgentSpec
-from src.meta_agent.planner import Planner
-from src.meta_agent.evaluator import Evaluator
-from src.meta_agent.synthesizer import Synthesizer
-from src.factory.agent_factory import AgentFactory
-from src.event_bus.bus import event_bus
-from src.shared_state.redis_store import store
 from src.config import MAX_RETRIES, RETRY_DELAY
-from src.task_logger import get_logger, close_logger
+from src.event_bus.bus import event_bus
+from src.factory.agent_factory import AgentFactory
+from src.meta_agent.evaluator import Evaluator
+from src.meta_agent.planner import Planner
+from src.meta_agent.synthesizer import Synthesizer
+from src.shared_state.redis_store import store
+from src.task_logger import close_logger, get_logger
+from src.types.task import Subtask
 
 
 class Orchestrator:
@@ -64,37 +63,52 @@ class Orchestrator:
         for attempt in range(1, MAX_RETRIES + 1):
             log = get_logger(task_id)
             try:
-                log.log("ORCHESTRATOR",
+                log.log(
+                    "ORCHESTRATOR",
                     f"Starting subtask: {subtask.subtask_id} (attempt {attempt}/{MAX_RETRIES})",
                     f"role={subtask.agent_spec.role}  goal={subtask.agent_spec.goal}  "
                     f"tools={subtask.agent_spec.tools}"
-                    f"  depends_on={subtask.depends_on}")
+                    f"  depends_on={subtask.depends_on}",
+                )
 
-                event_bus.emit(task_id, "node", {
-                    "node": "spawner",
-                    "status": "running",
-                    "agent": subtask.subtask_id,
-                    "attempt": attempt,
-                })
+                event_bus.emit(
+                    task_id,
+                    "node",
+                    {
+                        "node": "spawner",
+                        "status": "running",
+                        "agent": subtask.subtask_id,
+                        "attempt": attempt,
+                    },
+                )
 
                 agent = await factory.create_dynamic(subtask.agent_spec)
-                log.log("AGENT FACTORY", f"Agent created: {subtask.subtask_id} (attempt {attempt})",
-                    f"role={subtask.agent_spec.role}  tools={[t.name for t in agent.tools]}")
+                log.log(
+                    "AGENT FACTORY",
+                    f"Agent created: {subtask.subtask_id} (attempt {attempt})",
+                    f"role={subtask.agent_spec.role}  tools={[t.name for t in agent.tools]}",
+                )
 
-                event_bus.emit(task_id, "node", {
-                    "node": "spawner",
-                    "status": "done",
-                    "agent": subtask.subtask_id,
-                    "attempt": attempt,
-                })
+                event_bus.emit(
+                    task_id,
+                    "node",
+                    {
+                        "node": "spawner",
+                        "status": "done",
+                        "agent": subtask.subtask_id,
+                        "attempt": attempt,
+                    },
+                )
 
                 await store.set_subtask_status(task_id, subtask.subtask_id, "running")
                 shared_state = await self._build_shared_state(task_id, subtask)
                 output = await agent.run(task_id, subtask.agent_spec.goal, shared_state)
 
-                log.log_multiline("AGENT OUTPUT",
+                log.log_multiline(
+                    "AGENT OUTPUT",
                     f"Subtask {subtask.subtask_id} produced output ({len(output)} chars):",
-                    output)
+                    output,
+                )
 
                 is_valid = await evaluator.evaluate(task_id, subtask.subtask_id, output)
                 if is_valid:
@@ -105,36 +119,60 @@ class Orchestrator:
                     return subtask.subtask_id, True, output
 
                 last_error = "Output failed evaluation"
-                log.log("EVALUATOR", f"Subtask {subtask.subtask_id} FAILED evaluation",
-                    f"output was empty or None")
+                log.log(
+                    "EVALUATOR",
+                    f"Subtask {subtask.subtask_id} FAILED evaluation",
+                    "output was empty or None",
+                )
 
             except Exception as e:
                 last_error = str(e)
-                log.log("ERROR", f"Subtask {subtask.subtask_id} raised exception (attempt {attempt})",
-                    str(e))
-                event_bus.emit(task_id, "error", {
-                    "subtask_id": subtask.subtask_id,
-                    "message": last_error,
-                    "attempt": attempt,
-                })
+                log.log(
+                    "ERROR",
+                    f"Subtask {subtask.subtask_id} raised exception (attempt {attempt})",
+                    str(e),
+                )
+                event_bus.emit(
+                    task_id,
+                    "error",
+                    {
+                        "subtask_id": subtask.subtask_id,
+                        "message": last_error,
+                        "attempt": attempt,
+                    },
+                )
 
             if attempt < MAX_RETRIES:
                 await store.set_subtask_status(task_id, subtask.subtask_id, "retrying")
-                log.log("ORCHESTRATOR", f"Retrying {subtask.subtask_id} (attempt {attempt + 1}/{MAX_RETRIES})")
-                event_bus.emit(task_id, "subtask", {
-                    "agent_id": subtask.subtask_id,
-                    "status": "retrying",
-                    "attempt": attempt + 1,
-                })
+                log.log(
+                    "ORCHESTRATOR",
+                    f"Retrying {subtask.subtask_id} (attempt {attempt + 1}/{MAX_RETRIES})",
+                )
+                event_bus.emit(
+                    task_id,
+                    "subtask",
+                    {
+                        "agent_id": subtask.subtask_id,
+                        "status": "retrying",
+                        "attempt": attempt + 1,
+                    },
+                )
                 await asyncio.sleep(RETRY_DELAY)
 
         await store.set_subtask_status(task_id, subtask.subtask_id, "failed")
-        log.log("ORCHESTRATOR", f"Subtask {subtask.subtask_id} FAILED after {MAX_RETRIES} attempts",
-            f"last_error: {last_error}")
-        event_bus.emit(task_id, "error", {
-            "subtask_id": subtask.subtask_id,
-            "message": last_error or "Subtask failed after retries",
-        })
+        log.log(
+            "ORCHESTRATOR",
+            f"Subtask {subtask.subtask_id} FAILED after {MAX_RETRIES} attempts",
+            f"last_error: {last_error}",
+        )
+        event_bus.emit(
+            task_id,
+            "error",
+            {
+                "subtask_id": subtask.subtask_id,
+                "message": last_error or "Subtask failed after retries",
+            },
+        )
         return subtask.subtask_id, False, None
 
     async def _run(self, goal: str, task_id: str) -> None:
@@ -173,33 +211,38 @@ class Orchestrator:
 
             while pending:
                 dependency_failed = [
-                    s for s in pending.values()
-                    if any(dep in failed for dep in s.depends_on)
+                    s for s in pending.values() if any(dep in failed for dep in s.depends_on)
                 ]
                 for s in dependency_failed:
                     await store.set_subtask_status(task_id, s.subtask_id, "failed")
-                    log.log("ORCHESTRATOR", f"Subtask {s.subtask_id} marked failed — dependency failed")
-                    event_bus.emit(task_id, "error", {
-                        "subtask_id": s.subtask_id,
-                        "message": "Dependency failed",
-                    })
+                    log.log(
+                        "ORCHESTRATOR", f"Subtask {s.subtask_id} marked failed — dependency failed"
+                    )
+                    event_bus.emit(
+                        task_id,
+                        "error",
+                        {
+                            "subtask_id": s.subtask_id,
+                            "message": "Dependency failed",
+                        },
+                    )
                     failed.add(s.subtask_id)
                     pending.pop(s.subtask_id, None)
 
                 ready = [
-                    s for s in pending.values()
-                    if all(dep in completed for dep in s.depends_on)
+                    s for s in pending.values() if all(dep in completed for dep in s.depends_on)
                 ]
                 if not ready:
                     log.log("ORCHESTRATOR", "No ready subtasks — breaking")
                     break
 
-                log.log("ORCHESTRATOR",
-                    f"Running {len(ready)} ready subtask(s): {[s.subtask_id for s in ready]}")
-                results = await asyncio.gather(*[
-                    self._run_subtask_with_retry(task_id, s, evaluator, factory)
-                    for s in ready
-                ])
+                log.log(
+                    "ORCHESTRATOR",
+                    f"Running {len(ready)} ready subtask(s): {[s.subtask_id for s in ready]}",
+                )
+                results = await asyncio.gather(
+                    *[self._run_subtask_with_retry(task_id, s, evaluator, factory) for s in ready]
+                )
 
                 for subtask_id, ok, output in results:
                     pending.pop(subtask_id, None)
@@ -212,12 +255,19 @@ class Orchestrator:
                         log.log("ORCHESTRATOR", f"Subtask {subtask_id} added to failed set")
 
             if pending:
-                log.log("ORCHESTRATOR", "Unresolved subtasks remain (possible cycle)",
-                    f"pending: {list(pending.keys())}")
+                log.log(
+                    "ORCHESTRATOR",
+                    "Unresolved subtasks remain (possible cycle)",
+                    f"pending: {list(pending.keys())}",
+                )
                 await store.set_task_status(task_id, "failed")
-                event_bus.emit(task_id, "error", {
-                    "message": "Could not resolve subtask dependencies (possible cycle)",
-                })
+                event_bus.emit(
+                    task_id,
+                    "error",
+                    {
+                        "message": "Could not resolve subtask dependencies (possible cycle)",
+                    },
+                )
                 return
 
             event_bus.emit(task_id, "node", {"node": "executor", "status": "done"})
@@ -226,13 +276,19 @@ class Orchestrator:
             if not subtask_outputs:
                 log.log("ORCHESTRATOR", "No valid subtask outputs — aborting")
                 await store.set_task_status(task_id, "failed")
-                event_bus.emit(task_id, "error", {
-                    "message": "No valid subtask outputs produced",
-                })
+                event_bus.emit(
+                    task_id,
+                    "error",
+                    {
+                        "message": "No valid subtask outputs produced",
+                    },
+                )
                 return
 
-            log.log("ORCHESTRATOR",
-                f"All subtasks done. Passing {len(subtask_outputs)} outputs to synthesizer")
+            log.log(
+                "ORCHESTRATOR",
+                f"All subtasks done. Passing {len(subtask_outputs)} outputs to synthesizer",
+            )
             synthesizer = self._get_synthesizer()
             result = await synthesizer.synthesize(task_id, subtask_outputs)
 

@@ -1,5 +1,6 @@
+from unittest.mock import patch
+
 import pytest
-from unittest.mock import AsyncMock, patch
 
 from src.meta_agent.evaluator import Evaluator
 
@@ -32,13 +33,14 @@ class TestEvaluator:
             result = await evaluator.evaluate("task_01", "sub_01", None)
             assert result is False
             mock_bus.emit.assert_called_once_with(
-                "task_01", "error",
+                "task_01",
+                "error",
                 {"subtask_id": "sub_01", "message": "Output is empty"},
             )
 
     @pytest.mark.asyncio
     async def test_empty_string_fails(self, evaluator):
-        with patch("src.meta_agent.evaluator.event_bus") as mock_bus:
+        with patch("src.meta_agent.evaluator.event_bus"):
             result = await evaluator.evaluate("task_01", "sub_01", "")
             assert result is False
 

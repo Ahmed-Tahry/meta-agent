@@ -16,11 +16,11 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     | Decompose the following goal into a list of subtasks.
     | Assign each subtask to whatever role makes sense for the work (e.g. researcher, coder, writer, data_analyzer, reviewer, etc.).
     | Pre-built tools available: web_search, file_reader, code_executor.
-    | If a subtask requires a capability none of the pre-built tools provide, define a new custom tool 
+    | If a subtask requires a capability none of the pre-built tools provide, define a new custom tool
     | with a unique name and a clear description of what it should do in tool_definitions.
-    | 
+    |
     | CRITICAL: Your entire response must be ONLY a valid JSON array. No markdown formatting, no code fences, no explanations, no preamble, no postscript. Start with '[' and end with ']'.
-    | 
+    |
     | Each item in the array has:
     | - agent_id: unique identifier (e.g. "researcher_01", "coder_01", "analyzer_01")
     | - role: what kind of agent should handle this (anything you think fits)
@@ -29,7 +29,7 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     | - tool_definitions: object mapping custom tool names to their goals (e.g. {"my_tool": "what my_tool does"})
     | - depends_on: list of agent_ids this subtask depends on (empty list if none)
     | - output_format: "text" or "json"
-    | 
+    |
     | Goal: research how much energy bitcoin mining consumes globally, write a python script that estimates its annual carbon footprint using the current hashrate and average grid emission factors, then produce a balanced summary of the debate around crypto's environmental impact
     ------------------------------------------------------------
 
@@ -355,42 +355,42 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     Agent researcher_02 final output (4902 chars):
     ------------------------------------------------------------
     | ### Environmental Impact of Bitcoin: A Synthesis of Perspectives
-    | 
+    |
     | This report synthesizes the ongoing debate regarding the environmental impact of the Bitcoin network. It focuses on the primary tension between the network's significant electricity consumption and arguments regarding its potential role in modern energy systems.
-    | 
+    |
     | ---
-    | 
+    |
     | ### 1. Executive Summary
     | Bitcoin utilizes a "Proof-of-Work" (PoW) consensus mechanism, which requires substantial computational power—and therefore electricity—to secure the network and validate transactions. Critics characterize this energy usage as an unnecessary burden on global power grids and a contributor to carbon emissions. Conversely, proponents argue that Bitcoin mining can act as a flexible load for power grids, incentivizing the development of renewable energy projects and providing a buyer for "stranded" or excess energy that would otherwise be wasted. There is no consensus on the net environmental impact, as it depends heavily on the energy mix of the regions where mining occurs and the future evolution of global energy infrastructure.
-    | 
+    |
     | ---
-    | 
+    |
     | ### 2. Core Arguments: Environmental Critiques
     | Critiques of Bitcoin's energy usage typically center on the scale of consumption and the resulting carbon footprint.
-    | 
+    |
     | *   **High Absolute Energy Consumption:** Observers, including researchers at the Cambridge Bitcoin Electricity Consumption Index (CBECI), have documented that the Bitcoin network consumes electricity at a scale comparable to that of medium-sized countries.
     | *   **Carbon Intensity of Mining:** When Bitcoin mining is powered by fossil fuel-heavy grids (particularly coal), it contributes directly to greenhouse gas emissions. Critics argue this exacerbates climate change, especially if mining diverts energy from cleaner, more efficient industrial or residential uses.
     | *   **Electronic Waste (E-waste):** Specialized mining hardware (ASICs) becomes obsolete quickly. Critics point to the significant amount of hardware waste generated as miners upgrade to more efficient machines to remain profitable.
-    | 
+    |
     | ---
-    | 
+    |
     | ### 3. Counter-Arguments: Efficiency and Sustainability Claims
     | Proponents and industry advocates emphasize the unique economic characteristics of Bitcoin mining that may contribute to energy efficiency and grid sustainability.
-    | 
+    |
     | *   **Grid Stabilization (Demand Response):** Because Bitcoin mining operations can be turned on or off almost instantaneously, advocates argue they function as a "flexible load." Mining operations can curtail power usage during periods of high grid stress (e.g., extreme weather) and ramp up consumption when energy supply is abundant, helping to balance the grid.
     | *   **Renewable Energy Integration:** Advocates suggest that miners are often drawn to regions with excess, inexpensive, and renewable energy (such as hydroelectric, wind, or solar). In this view, miners provide a financial incentive to build renewable energy capacity, as they provide a reliable revenue stream for energy producers in remote areas where transmission to consumers is difficult.
     | *   **Methane Mitigation:** Emerging initiatives are exploring the use of vented methane (a potent greenhouse gas) from oil and gas fields to power modular Bitcoin mining units. Proponents argue this converts a harmful emission into productive energy, potentially offering a net-positive climate impact compared to simple venting or flaring.
-    | 
+    |
     | ---
-    | 
+    |
     | ### 4. Conclusion: Current Scientific Consensus
     | There is no singular, settled scientific consensus on the net environmental impact of Bitcoin mining. The academic and policy debate remains polarized. The impact is highly context-dependent, varying based on the energy source used by the miners, their operational efficiency, and the regulatory environment of the jurisdiction. While the massive energy demand of the Proof-of-Work mechanism is a quantifiable fact, its role as either a drain on resources or a catalyst for energy transition remains a subject of active research and fierce debate.
-    | 
+    |
     | ---
-    | 
+    |
     | ### 5. References
     | *(Note: As this is a summary report, the following reflect the types of authoritative sources used in this analysis.)*
-    | 
+    |
     | 1.  **Cambridge Centre for Alternative Finance (CCAF):** *Cambridge Bitcoin Electricity Consumption Index (CBECI).* (Provides data and methodology for estimating global Bitcoin energy consumption).
     | 2.  **Academic Journals (e.g., Joule, Nature):** Various peer-reviewed studies examining the link between cryptocurrency mining and its correlation with both fossil fuel and renewable energy deployment.
     | 3.  **Industry Reports (e.g., Bitcoin Mining Council):** Reports published by industry groups outlining the growth of sustainable energy usage in mining.
@@ -401,42 +401,42 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     Subtask researcher_02 produced output (4902 chars):
     ------------------------------------------------------------
     | ### Environmental Impact of Bitcoin: A Synthesis of Perspectives
-    | 
+    |
     | This report synthesizes the ongoing debate regarding the environmental impact of the Bitcoin network. It focuses on the primary tension between the network's significant electricity consumption and arguments regarding its potential role in modern energy systems.
-    | 
+    |
     | ---
-    | 
+    |
     | ### 1. Executive Summary
     | Bitcoin utilizes a "Proof-of-Work" (PoW) consensus mechanism, which requires substantial computational power—and therefore electricity—to secure the network and validate transactions. Critics characterize this energy usage as an unnecessary burden on global power grids and a contributor to carbon emissions. Conversely, proponents argue that Bitcoin mining can act as a flexible load for power grids, incentivizing the development of renewable energy projects and providing a buyer for "stranded" or excess energy that would otherwise be wasted. There is no consensus on the net environmental impact, as it depends heavily on the energy mix of the regions where mining occurs and the future evolution of global energy infrastructure.
-    | 
+    |
     | ---
-    | 
+    |
     | ### 2. Core Arguments: Environmental Critiques
     | Critiques of Bitcoin's energy usage typically center on the scale of consumption and the resulting carbon footprint.
-    | 
+    |
     | *   **High Absolute Energy Consumption:** Observers, including researchers at the Cambridge Bitcoin Electricity Consumption Index (CBECI), have documented that the Bitcoin network consumes electricity at a scale comparable to that of medium-sized countries.
     | *   **Carbon Intensity of Mining:** When Bitcoin mining is powered by fossil fuel-heavy grids (particularly coal), it contributes directly to greenhouse gas emissions. Critics argue this exacerbates climate change, especially if mining diverts energy from cleaner, more efficient industrial or residential uses.
     | *   **Electronic Waste (E-waste):** Specialized mining hardware (ASICs) becomes obsolete quickly. Critics point to the significant amount of hardware waste generated as miners upgrade to more efficient machines to remain profitable.
-    | 
+    |
     | ---
-    | 
+    |
     | ### 3. Counter-Arguments: Efficiency and Sustainability Claims
     | Proponents and industry advocates emphasize the unique economic characteristics of Bitcoin mining that may contribute to energy efficiency and grid sustainability.
-    | 
+    |
     | *   **Grid Stabilization (Demand Response):** Because Bitcoin mining operations can be turned on or off almost instantaneously, advocates argue they function as a "flexible load." Mining operations can curtail power usage during periods of high grid stress (e.g., extreme weather) and ramp up consumption when energy supply is abundant, helping to balance the grid.
     | *   **Renewable Energy Integration:** Advocates suggest that miners are often drawn to regions with excess, inexpensive, and renewable energy (such as hydroelectric, wind, or solar). In this view, miners provide a financial incentive to build renewable energy capacity, as they provide a reliable revenue stream for energy producers in remote areas where transmission to consumers is difficult.
     | *   **Methane Mitigation:** Emerging initiatives are exploring the use of vented methane (a potent greenhouse gas) from oil and gas fields to power modular Bitcoin mining units. Proponents argue this converts a harmful emission into productive energy, potentially offering a net-positive climate impact compared to simple venting or flaring.
-    | 
+    |
     | ---
-    | 
+    |
     | ### 4. Conclusion: Current Scientific Consensus
     | There is no singular, settled scientific consensus on the net environmental impact of Bitcoin mining. The academic and policy debate remains polarized. The impact is highly context-dependent, varying based on the energy source used by the miners, their operational efficiency, and the regulatory environment of the jurisdiction. While the massive energy demand of the Proof-of-Work mechanism is a quantifiable fact, its role as either a drain on resources or a catalyst for energy transition remains a subject of active research and fierce debate.
-    | 
+    |
     | ---
-    | 
+    |
     | ### 5. References
     | *(Note: As this is a summary report, the following reflect the types of authoritative sources used in this analysis.)*
-    | 
+    |
     | 1.  **Cambridge Centre for Alternative Finance (CCAF):** *Cambridge Bitcoin Electricity Consumption Index (CBECI).* (Provides data and methodology for estimating global Bitcoin energy consumption).
     | 2.  **Academic Journals (e.g., Joule, Nature):** Various peer-reviewed studies examining the link between cryptocurrency mining and its correlation with both fossil fuel and renewable energy deployment.
     | 3.  **Industry Reports (e.g., Bitcoin Mining Council):** Reports published by industry groups outlining the growth of sustainable energy usage in mining.
@@ -497,62 +497,62 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     Agent coder_01 final output (2694 chars):
     ------------------------------------------------------------
     | ### 1. Mathematical Model
-    | 
+    |
     | To calculate the annual carbon footprint of a mining operation, we convert the network hashrate and hardware efficiency into an annual electricity consumption figure, then multiply by the grid emission factor.
-    | 
+    |
     | **Variables:**
     | *   $H$: Hashrate (Exahashes per second, $EH/s$)
     | *   $E$: Efficiency ($Joules/Terahash, J/TH$)
     | *   $G$: Grid emission factor ($gCO_2e/kWh$)
     | *   $T$: Seconds per year ($365.25 \times 24 \times 3600 \approx 31,557,600$)
-    | 
+    |
     | **Formula:**
     | 1.  **Annual Energy ($kWh$):**
     |     $$\text{Energy}_{kWh} = \frac{H \times 10^6 \times T \times E}{3.6 \times 10^6}$$
     |     *(Note: $10^6$ converts EH/s to TH/s. $3.6 \times 10^6$ converts Joules to $kWh$)*
-    | 
+    |
     | 2.  **Annual Carbon Footprint ($Metric\ Tons\ CO_2e$):**
     |     $$\text{Footprint} = \frac{\text{Energy}_{kWh} \times G}{1,000,000}$$
     |     *(Note: $1,000,000$ converts grams to Metric Tons)*
-    | 
+    |
     | ---
-    | 
+    |
     | ### 2. Implementation
-    | 
+    |
     | ```python
     | def calculate_annual_carbon_footprint(hashrate_ehs, efficiency_j_th, emission_factor_gco2e_kwh):
     |     """
     |     Calculates the annual carbon footprint of mining operations.
-    |     
+    |
     |     :param hashrate_ehs: Hashrate in Exahashes per second (EH/s)
     |     :param efficiency_j_th: Hardware efficiency in Joules per Terahash (J/TH)
     |     :param emission_factor_gco2e_kwh: Regional grid emission factor (gCO2e/kWh)
     |     :return: Annual carbon footprint in Metric Tons of CO2e
     |     """
     |     # Input validation
-    |     if not all(isinstance(val, (int, float)) and val >= 0 for val in 
+    |     if not all(isinstance(val, (int, float)) and val >= 0 for val in
     |                [hashrate_ehs, efficiency_j_th, emission_factor_gco2e_kwh]):
     |         raise ValueError("All inputs must be non-negative numeric values.")
-    | 
+    |
     |     # Constants
     |     SECONDS_PER_YEAR = 31557600  # 365.25 days
     |     JOULES_PER_KWH = 3600000     # 3.6 million
     |     G_TO_TONNES = 1000000        # 1 million
-    | 
+    |
     |     # Annual Energy (kWh) calculation
     |     # H (EH/s) * 10^6 (TH/EH) * T (s) * E (J/TH) / 3.6*10^6 (J/kWh)
     |     annual_energy_kwh = (hashrate_ehs * 10**6 * SECONDS_PER_YEAR * efficiency_j_th) / JOULES_PER_KWH
-    |     
+    |
     |     # Total emissions (Metric Tons)
     |     total_emissions_tonnes = (annual_energy_kwh * emission_factor_gco2e_kwh) / G_TO_TONNES
-    |     
+    |
     |     return total_emissions_tonnes
     | ```
-    | 
+    |
     | ---
-    | 
+    |
     | ### 3. Usage Example
-    | 
+    |
     | ```python
     | # Example: Using 675 EH/s, 25 J/TH efficiency, and 450 gCO2e/kWh grid factor
     | params = {
@@ -560,13 +560,13 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     |     "efficiency_j_th": 25,
     |     "emission_factor_gco2e_kwh": 450
     | }
-    | 
+    |
     | try:
     |     carbon_footprint = calculate_annual_carbon_footprint(**params)
     |     print(f"Estimated Annual Carbon Footprint: {carbon_footprint:,.0f} Metric Tons CO2e")
     | except ValueError as e:
     |     print(f"Error calculating footprint: {e}")
-    | 
+    |
     | # Output: Estimated Annual Carbon Footprint: 66,566,812 Metric Tons CO2e
     | ```
     ------------------------------------------------------------
@@ -575,62 +575,62 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     Subtask coder_01 produced output (2694 chars):
     ------------------------------------------------------------
     | ### 1. Mathematical Model
-    | 
+    |
     | To calculate the annual carbon footprint of a mining operation, we convert the network hashrate and hardware efficiency into an annual electricity consumption figure, then multiply by the grid emission factor.
-    | 
+    |
     | **Variables:**
     | *   $H$: Hashrate (Exahashes per second, $EH/s$)
     | *   $E$: Efficiency ($Joules/Terahash, J/TH$)
     | *   $G$: Grid emission factor ($gCO_2e/kWh$)
     | *   $T$: Seconds per year ($365.25 \times 24 \times 3600 \approx 31,557,600$)
-    | 
+    |
     | **Formula:**
     | 1.  **Annual Energy ($kWh$):**
     |     $$\text{Energy}_{kWh} = \frac{H \times 10^6 \times T \times E}{3.6 \times 10^6}$$
     |     *(Note: $10^6$ converts EH/s to TH/s. $3.6 \times 10^6$ converts Joules to $kWh$)*
-    | 
+    |
     | 2.  **Annual Carbon Footprint ($Metric\ Tons\ CO_2e$):**
     |     $$\text{Footprint} = \frac{\text{Energy}_{kWh} \times G}{1,000,000}$$
     |     *(Note: $1,000,000$ converts grams to Metric Tons)*
-    | 
+    |
     | ---
-    | 
+    |
     | ### 2. Implementation
-    | 
+    |
     | ```python
     | def calculate_annual_carbon_footprint(hashrate_ehs, efficiency_j_th, emission_factor_gco2e_kwh):
     |     """
     |     Calculates the annual carbon footprint of mining operations.
-    |     
+    |
     |     :param hashrate_ehs: Hashrate in Exahashes per second (EH/s)
     |     :param efficiency_j_th: Hardware efficiency in Joules per Terahash (J/TH)
     |     :param emission_factor_gco2e_kwh: Regional grid emission factor (gCO2e/kWh)
     |     :return: Annual carbon footprint in Metric Tons of CO2e
     |     """
     |     # Input validation
-    |     if not all(isinstance(val, (int, float)) and val >= 0 for val in 
+    |     if not all(isinstance(val, (int, float)) and val >= 0 for val in
     |                [hashrate_ehs, efficiency_j_th, emission_factor_gco2e_kwh]):
     |         raise ValueError("All inputs must be non-negative numeric values.")
-    | 
+    |
     |     # Constants
     |     SECONDS_PER_YEAR = 31557600  # 365.25 days
     |     JOULES_PER_KWH = 3600000     # 3.6 million
     |     G_TO_TONNES = 1000000        # 1 million
-    | 
+    |
     |     # Annual Energy (kWh) calculation
     |     # H (EH/s) * 10^6 (TH/EH) * T (s) * E (J/TH) / 3.6*10^6 (J/kWh)
     |     annual_energy_kwh = (hashrate_ehs * 10**6 * SECONDS_PER_YEAR * efficiency_j_th) / JOULES_PER_KWH
-    |     
+    |
     |     # Total emissions (Metric Tons)
     |     total_emissions_tonnes = (annual_energy_kwh * emission_factor_gco2e_kwh) / G_TO_TONNES
-    |     
+    |
     |     return total_emissions_tonnes
     | ```
-    | 
+    |
     | ---
-    | 
+    |
     | ### 3. Usage Example
-    | 
+    |
     | ```python
     | # Example: Using 675 EH/s, 25 J/TH efficiency, and 450 gCO2e/kWh grid factor
     | params = {
@@ -638,13 +638,13 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     |     "efficiency_j_th": 25,
     |     "emission_factor_gco2e_kwh": 450
     | }
-    | 
+    |
     | try:
     |     carbon_footprint = calculate_annual_carbon_footprint(**params)
     |     print(f"Estimated Annual Carbon Footprint: {carbon_footprint:,.0f} Metric Tons CO2e")
     | except ValueError as e:
     |     print(f"Error calculating footprint: {e}")
-    | 
+    |
     | # Output: Estimated Annual Carbon Footprint: 66,566,812 Metric Tons CO2e
     | ```
     ------------------------------------------------------------
@@ -697,32 +697,32 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     Agent writer_01 final output (3021 chars):
     ------------------------------------------------------------
     | # Report: The Environmental Impact of Bitcoin Mining
-    | 
+    |
     | ## 1. Introduction
     | The Bitcoin network’s Proof-of-Work (PoW) consensus mechanism has sparked a global debate regarding its environmental sustainability. This report synthesizes technical data regarding its energy consumption with the polarized perspectives surrounding its impact on modern energy grids.
-    | 
+    |
     | ## 2. Quantitative Assessment: Carbon Footprint Model
     | To determine the environmental cost of a mining operation, analysts utilize a standardized mathematical model based on network hashrate and hardware efficiency.
-    | 
+    |
     | **The Calculation Framework:**
     | *   **Annual Electricity Consumption:** Calculated by multiplying the network hashrate ($H$) by hardware efficiency ($E$) over the total seconds in a year ($T$).
     | *   **Carbon Emissions:** The resulting energy figure (in kWh) is multiplied by the specific grid emission factor ($G$) to estimate the annual output of $CO_2$ equivalents ($gCO_2e$).
-    | 
+    |
     | This model demonstrates that the network’s total carbon footprint is highly sensitive to two variables: the efficiency of mining hardware and the carbon intensity of the electricity grid from which the operation draws power.
-    | 
+    |
     | ## 3. Perspectives on Environmental Impact
-    | 
+    |
     | ### The Case for Environmental Concern
     | Critics argue that the PoW mechanism is inherently wasteful. Key arguments include:
     | *   **High Absolute Consumption:** The network demands a massive, continuous supply of electricity, which, when sourced from fossil-fuel-heavy grids, contributes significantly to global carbon emissions.
     | *   **Resource Intensity:** The rapid turnover of specialized mining hardware generates significant electronic waste, adding to the network's overall ecological footprint.
-    | 
+    |
     | ### The Case for Energy Integration and Innovation
     | Proponents offer a counter-narrative, suggesting Bitcoin mining can act as a catalyst for energy transition:
     | *   **Grid Balancing:** Mining operations can function as "flexible load," stabilizing grids by consuming excess energy during periods of low demand and curtailing usage during peak demand.
     | *   **Renewable Energy Incentivization:** Bitcoin miners are increasingly co-located with stranded renewable energy sources (such as remote hydroelectric or wind projects), providing a reliable revenue stream that makes these projects economically viable.
     | *   **Methane Mitigation:** Emerging initiatives use flared methane from oil and gas sites—an otherwise potent greenhouse gas—to power mining rigs, potentially resulting in a net-positive environmental outcome.
-    | 
+    |
     | ## 4. Conclusion
     | The environmental impact of Bitcoin mining remains a complex, multifaceted issue. While technical modeling confirms the network's substantial electricity demand, the net ecological effect is heavily dependent on the energy mix of the grid and the integration of mining operations with renewable infrastructure. Future discourse likely hinges on whether the industry’s shift toward sustainable energy sources can outpace the network’s inherent energy requirements.
     ------------------------------------------------------------
@@ -731,32 +731,32 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     Subtask writer_01 produced output (3021 chars):
     ------------------------------------------------------------
     | # Report: The Environmental Impact of Bitcoin Mining
-    | 
+    |
     | ## 1. Introduction
     | The Bitcoin network’s Proof-of-Work (PoW) consensus mechanism has sparked a global debate regarding its environmental sustainability. This report synthesizes technical data regarding its energy consumption with the polarized perspectives surrounding its impact on modern energy grids.
-    | 
+    |
     | ## 2. Quantitative Assessment: Carbon Footprint Model
     | To determine the environmental cost of a mining operation, analysts utilize a standardized mathematical model based on network hashrate and hardware efficiency.
-    | 
+    |
     | **The Calculation Framework:**
     | *   **Annual Electricity Consumption:** Calculated by multiplying the network hashrate ($H$) by hardware efficiency ($E$) over the total seconds in a year ($T$).
     | *   **Carbon Emissions:** The resulting energy figure (in kWh) is multiplied by the specific grid emission factor ($G$) to estimate the annual output of $CO_2$ equivalents ($gCO_2e$).
-    | 
+    |
     | This model demonstrates that the network’s total carbon footprint is highly sensitive to two variables: the efficiency of mining hardware and the carbon intensity of the electricity grid from which the operation draws power.
-    | 
+    |
     | ## 3. Perspectives on Environmental Impact
-    | 
+    |
     | ### The Case for Environmental Concern
     | Critics argue that the PoW mechanism is inherently wasteful. Key arguments include:
     | *   **High Absolute Consumption:** The network demands a massive, continuous supply of electricity, which, when sourced from fossil-fuel-heavy grids, contributes significantly to global carbon emissions.
     | *   **Resource Intensity:** The rapid turnover of specialized mining hardware generates significant electronic waste, adding to the network's overall ecological footprint.
-    | 
+    |
     | ### The Case for Energy Integration and Innovation
     | Proponents offer a counter-narrative, suggesting Bitcoin mining can act as a catalyst for energy transition:
     | *   **Grid Balancing:** Mining operations can function as "flexible load," stabilizing grids by consuming excess energy during periods of low demand and curtailing usage during peak demand.
     | *   **Renewable Energy Incentivization:** Bitcoin miners are increasingly co-located with stranded renewable energy sources (such as remote hydroelectric or wind projects), providing a reliable revenue stream that makes these projects economically viable.
     | *   **Methane Mitigation:** Emerging initiatives use flared methane from oil and gas sites—an otherwise potent greenhouse gas—to power mining rigs, potentially resulting in a net-positive environmental outcome.
-    | 
+    |
     | ## 4. Conclusion
     | The environmental impact of Bitcoin mining remains a complex, multifaceted issue. While technical modeling confirms the network's substantial electricity demand, the net ecological effect is heavily dependent on the energy mix of the grid and the integration of mining operations with renewable infrastructure. Future discourse likely hinges on whether the industry’s shift toward sustainable energy sources can outpace the network’s inherent energy requirements.
     ------------------------------------------------------------
@@ -813,23 +813,23 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
 --- [2026-06-06T11:52:04.506Z] AGENT ---
     Agent reviewer_01 final output (2023 chars):
     ------------------------------------------------------------
-    | Since the internal file reading tool is unavailable in this environment, I have analyzed the provided snippets based on the logic presented in your prompt. 
-    | 
+    | Since the internal file reading tool is unavailable in this environment, I have analyzed the provided snippets based on the logic presented in your prompt.
+    |
     | ### **Verification Status:** [Fail]
-    | 
+    |
     | ### **Logic Analysis:**
-    | The current scripts are incomplete and contain a mathematical discrepancy. 
-    | 1. **Dimensional Inconsistency:** The formula provided in `coder_01` attempts to calculate annual energy consumption using Hashrate ($EH/s$) and Efficiency ($J/TH$). 
+    | The current scripts are incomplete and contain a mathematical discrepancy.
+    | 1. **Dimensional Inconsistency:** The formula provided in `coder_01` attempts to calculate annual energy consumption using Hashrate ($EH/s$) and Efficiency ($J/TH$).
     |    *   Calculation: $(H \times 10^{18} \text{ hashes/sec}) \times (E \text{ Joules/Terahash}) \times (10^{-12} \text{ TH/hash})$.
     |    *   The current variables provided do not explicitly account for the unit conversion between "Exahash" and "Terahash" required for the formula to resolve to Watt-hours (or Joules).
     | 2. **Missing Steps:** The formula in `coder_01` stops at "1. Annual En...", failing to complete the conversion from Joules to Kilowatt-hours ($kWh$) before multiplying by the grid emission factor ($gCO_2e/kWh$).
-    | 
+    |
     | ### **Tone Assessment:**
     | The tone in `writer_01` is neutral and professional. It successfully avoids loaded language and appropriately frames the issue as a "polarized" debate. No bias was detected in the introduction.
-    | 
+    |
     | ### **Recommended Revisions:**
-    | 
-    | *   **Mathematical Correction:** Complete the conversion formula. 
+    |
+    | *   **Mathematical Correction:** Complete the conversion formula.
     |     *   *Correction Suggestion:* Ensure the energy formula includes the conversion factor $3.6 \times 10^6$ to convert Joules to $kWh$.
     |     *   *Example Formula:* $\text{Annual Energy (kWh)} = \frac{(H \times 10^{6}) \times E \times T}{3.6 \times 10^6}$ (Note: $H$ in $EH/s$ converted to $TH/s$ requires multiplying by $10^6$).
     | *   **Variable Clarity:** Clearly define the conversion factor between $EH/s$ and $TH/s$ within the variable list to ensure the logic is transparent for the reader.
@@ -839,23 +839,23 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
 --- [2026-06-06T11:52:04.534Z] AGENT OUTPUT ---
     Subtask reviewer_01 produced output (2023 chars):
     ------------------------------------------------------------
-    | Since the internal file reading tool is unavailable in this environment, I have analyzed the provided snippets based on the logic presented in your prompt. 
-    | 
+    | Since the internal file reading tool is unavailable in this environment, I have analyzed the provided snippets based on the logic presented in your prompt.
+    |
     | ### **Verification Status:** [Fail]
-    | 
+    |
     | ### **Logic Analysis:**
-    | The current scripts are incomplete and contain a mathematical discrepancy. 
-    | 1. **Dimensional Inconsistency:** The formula provided in `coder_01` attempts to calculate annual energy consumption using Hashrate ($EH/s$) and Efficiency ($J/TH$). 
+    | The current scripts are incomplete and contain a mathematical discrepancy.
+    | 1. **Dimensional Inconsistency:** The formula provided in `coder_01` attempts to calculate annual energy consumption using Hashrate ($EH/s$) and Efficiency ($J/TH$).
     |    *   Calculation: $(H \times 10^{18} \text{ hashes/sec}) \times (E \text{ Joules/Terahash}) \times (10^{-12} \text{ TH/hash})$.
     |    *   The current variables provided do not explicitly account for the unit conversion between "Exahash" and "Terahash" required for the formula to resolve to Watt-hours (or Joules).
     | 2. **Missing Steps:** The formula in `coder_01` stops at "1. Annual En...", failing to complete the conversion from Joules to Kilowatt-hours ($kWh$) before multiplying by the grid emission factor ($gCO_2e/kWh$).
-    | 
+    |
     | ### **Tone Assessment:**
     | The tone in `writer_01` is neutral and professional. It successfully avoids loaded language and appropriately frames the issue as a "polarized" debate. No bias was detected in the introduction.
-    | 
+    |
     | ### **Recommended Revisions:**
-    | 
-    | *   **Mathematical Correction:** Complete the conversion formula. 
+    |
+    | *   **Mathematical Correction:** Complete the conversion formula.
     |     *   *Correction Suggestion:* Ensure the energy formula includes the conversion factor $3.6 \times 10^6$ to convert Joules to $kWh$.
     |     *   *Example Formula:* $\text{Annual Energy (kWh)} = \frac{(H \times 10^{6}) \times E \times T}{3.6 \times 10^6}$ (Note: $H$ in $EH/s$ converted to $TH/s$ requires multiplying by $10^6$).
     | *   **Variable Clarity:** Clearly define the conversion factor between $EH/s$ and $TH/s$ within the variable list to ensure the logic is transparent for the reader.
@@ -891,19 +891,19 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     |       "source": "Blockchain.com / Glassnode (7-day average, Q1-Q2 2025)"
     | ...
     |   [researcher_02] (4902 chars): ### Environmental Impact of Bitcoin: A Synthesis of Perspectives
-    | 
+    |
     | This report synthesizes the ongoing debate regarding the environmental impact of the Bitcoin network. It focuses on the primary tensio...
     |   [coder_01] (2694 chars): ### 1. Mathematical Model
-    | 
+    |
     | To calculate the annual carbon footprint of a mining operation, we convert the network hashrate and hardware efficiency into an annual electricity consumption figure, then m...
     |   [writer_01] (3021 chars): # Report: The Environmental Impact of Bitcoin Mining
-    | 
+    |
     | ## 1. Introduction
     | The Bitcoin network’s Proof-of-Work (PoW) consensus mechanism has sparked a global debate regarding its environmental sustainab...
-    |   [reviewer_01] (2023 chars): Since the internal file reading tool is unavailable in this environment, I have analyzed the provided snippets based on the logic presented in your prompt. 
-    | 
+    |   [reviewer_01] (2023 chars): Since the internal file reading tool is unavailable in this environment, I have analyzed the provided snippets based on the logic presented in your prompt.
+    |
     | ### **Verification Status:** [Fail]
-    | 
+    |
     | ### *...
     ------------------------------------------------------------
 
@@ -917,30 +917,30 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     Final result:
     ------------------------------------------------------------
     | # Report: The Environmental Impact of Bitcoin Mining
-    | 
+    |
     | ## 1. Introduction
     | The Bitcoin network’s Proof-of-Work (PoW) consensus mechanism has sparked a global debate regarding its environmental sustainability. This report synthesizes technical data regarding the network’s electricity consumption with the polarized perspectives surrounding its impact on modern energy grids, providing a verified framework for assessing its carbon footprint.
-    | 
+    |
     | ## 2. Technical Assessment: The Carbon Footprint Model
-    | To quantify the environmental impact of Bitcoin mining, analysts use a model based on network hashrate, hardware efficiency, and grid carbon intensity. 
-    | 
+    | To quantify the environmental impact of Bitcoin mining, analysts use a model based on network hashrate, hardware efficiency, and grid carbon intensity.
+    |
     | ### The Standardized Calculation Framework
     | The annual carbon footprint is derived by calculating the total electricity consumption in kilowatt-hours ($kWh$) and applying the regional grid emission factor ($G$).
-    | 
+    |
     | **Variables:**
     | *   $H$: Network Hashrate ($EH/s$)
     | *   $E$: Hardware Efficiency ($J/TH$)
     | *   $G$: Grid Emission Factor ($gCO_2e/kWh$)
     | *   $T$: Seconds per year ($31,557,600$)
-    | 
+    |
     | **Mathematical Model:**
     | 1.  **Annual Energy ($kWh$):**
     |     $$\text{Energy}_{kWh} = \frac{(H \times 10^6) \times T \times E}{3.6 \times 10^6}$$
     |     *(Note: $10^6$ converts $EH/s$ to $TH/s$; $3.6 \times 10^6$ converts Joules to $kWh$.)*
-    | 
+    |
     | 2.  **Annual Carbon Footprint ($Metric\ Tons\ CO_2e$):**
     |     $$\text{Footprint} = \frac{\text{Energy}_{kWh} \times G}{1,000,000}$$
-    | 
+    |
     | ### Implementation
     | ```python
     | def calculate_annual_carbon_footprint(hashrate_ehs, efficiency_j_th, emission_factor_gco2e_kwh):
@@ -948,27 +948,27 @@ GOAL            |  research how much energy bitcoin mining consumes globally, wr
     |     SECONDS_PER_YEAR = 31557600
     |     JOULES_PER_KWH = 3600000
     |     G_TO_TONNES = 1000000
-    |     
+    |
     |     # Calculate energy and footprint
     |     annual_energy_kwh = (hashrate_ehs * 10**6 * SECONDS_PER_YEAR * efficiency_j_th) / JOULES_PER_KWH
     |     total_emissions_tonnes = (annual_energy_kwh * emission_factor_gco2e_kwh) / G_TO_TONNES
-    |     
+    |
     |     return total_emissions_tonnes
     | ```
-    | 
+    |
     | ## 3. Perspectives on Environmental Impact
-    | 
+    |
     | ### The Case for Environmental Concern
     | Critics argue that the PoW mechanism is inherently resource-intensive:
     | *   **High Absolute Consumption:** The network demands a massive, continuous supply of electricity (estimated at 120–180 $TWh/year$ as of 2025). When sourced from fossil-fuel-heavy grids, this contributes significantly to carbon emissions.
     | *   **Electronic Waste:** The rapid obsolescence of specialized mining hardware (ASICs) generates significant quantities of electronic waste as miners upgrade for efficiency.
-    | 
+    |
     | ### The Case for Energy Integration and Innovation
     | Proponents suggest Bitcoin mining acts as a catalyst for energy transition:
     | *   **Grid Balancing:** Mining functions as a "flexible load," allowing operators to curtail usage during periods of high grid stress and consume energy during times of excess supply.
     | *   **Renewable Energy Incentivization:** Mining provides a consistent revenue stream for remote or stranded renewable energy projects, improving their economic viability.
     | *   **Methane Mitigation:** Pilot initiatives are capturing flared methane—a potent greenhouse gas—from oil and gas sites to power mining rigs, potentially shifting the net impact from emissions to energy recovery.
-    | 
+    |
     | ## 4. Conclusion
     | The environmental impact of Bitcoin mining is context-dependent. While the network’s energy requirements are quantifiable and high, the net ecological effect is determined by the energy mix of the specific grid in use and the degree to which mining operations integrate with sustainable infrastructure. As the industry evolves, the balance between network energy requirements and the deployment of clean energy technologies remains the primary driver of its environmental footprint.
     ------------------------------------------------------------

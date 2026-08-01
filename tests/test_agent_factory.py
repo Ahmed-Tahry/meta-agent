@@ -1,9 +1,9 @@
+from unittest.mock import AsyncMock, mock_open, patch
+
 import pytest
-from unittest.mock import AsyncMock, patch, mock_open
 
 from src.factory.agent_factory import AgentFactory, load_agent_configs
 from src.tools import Tool
-
 
 SAMPLE_YAML = """
 researcher:
@@ -39,6 +39,7 @@ class TestAgentFactory:
 
     def test_create_researcher(self, factory):
         from src.types.agent_spec import AgentSpec
+
         spec = AgentSpec(
             agent_id="researcher_01",
             role="researcher",
@@ -53,6 +54,7 @@ class TestAgentFactory:
 
     def test_create_coder(self, factory):
         from src.types.agent_spec import AgentSpec
+
         spec = AgentSpec(
             agent_id="coder_01",
             role="coder",
@@ -65,6 +67,7 @@ class TestAgentFactory:
 
     def test_create_writer(self, factory):
         from src.types.agent_spec import AgentSpec
+
         spec = AgentSpec(
             agent_id="writer_01",
             role="writer",
@@ -76,6 +79,7 @@ class TestAgentFactory:
 
     def test_create_with_multiple_tools(self, factory):
         from src.types.agent_spec import AgentSpec
+
         spec = AgentSpec(
             agent_id="coder_01",
             role="coder",
@@ -86,8 +90,9 @@ class TestAgentFactory:
         assert len(agent.tools) == 3
 
     def test_create_unknown_agent_type(self, factory):
-        from src.types.agent_spec import AgentSpec
         from src.agents.base import Agent
+        from src.types.agent_spec import AgentSpec
+
         spec = AgentSpec(
             agent_id="unknown_01",
             role="unknown",

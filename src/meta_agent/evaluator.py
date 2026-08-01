@@ -10,12 +10,19 @@ class Evaluator:
 
         if output is None or (isinstance(output, str) and not output.strip()):
             log.log("EVALUATOR", f"Subtask {subtask_id} FAILED — output is None or empty")
-            event_bus.emit(task_id, "error", {
-                "subtask_id": subtask_id,
-                "message": "Output is empty",
-            })
+            event_bus.emit(
+                task_id,
+                "error",
+                {
+                    "subtask_id": subtask_id,
+                    "message": "Output is empty",
+                },
+            )
             return False
 
-        log.log("EVALUATOR", f"Subtask {subtask_id} PASSED evaluation",
-            f"output length: {len(str(output))} chars")
+        log.log(
+            "EVALUATOR",
+            f"Subtask {subtask_id} PASSED evaluation",
+            f"output length: {len(str(output))} chars",
+        )
         return True

@@ -16,11 +16,11 @@ GOAL            |  i wanna know about quantum computers
     | Decompose the following goal into a list of subtasks.
     | Assign each subtask to whatever role makes sense for the work (e.g. researcher, coder, writer, data_analyzer, reviewer, etc.).
     | Pre-built tools available: web_search, file_reader, code_executor.
-    | If a subtask requires a capability none of the pre-built tools provide, define a new custom tool 
+    | If a subtask requires a capability none of the pre-built tools provide, define a new custom tool
     | with a unique name and a clear description of what it should do in tool_definitions.
-    | 
+    |
     | CRITICAL: Your entire response must be ONLY a valid JSON array. No markdown formatting, no code fences, no explanations, no preamble, no postscript. Start with '[' and end with ']'.
-    | 
+    |
     | Each item in the array has:
     | - agent_id: unique identifier (e.g. "researcher_01", "coder_01", "analyzer_01")
     | - role: what kind of agent should handle this (anything you think fits)
@@ -29,7 +29,7 @@ GOAL            |  i wanna know about quantum computers
     | - tool_definitions: object mapping custom tool names to their goals (e.g. {"my_tool": "what my_tool does"})
     | - depends_on: list of agent_ids this subtask depends on (empty list if none)
     | - output_format: "text" or "json"
-    | 
+    |
     | Goal: i wanna know about quantum computers
     ------------------------------------------------------------
 

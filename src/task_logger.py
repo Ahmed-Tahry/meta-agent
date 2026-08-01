@@ -1,14 +1,13 @@
-import json
 import os
 from contextvars import ContextVar
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 LOG_DIR = "logs"
 current_task_id: ContextVar[str] = ContextVar("current_task_id", default="")
 
 
 def _ts() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
 
 
 class TaskLogger:

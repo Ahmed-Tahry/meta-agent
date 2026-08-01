@@ -1,7 +1,7 @@
 import asyncio
+import json
 import os
 import sys
-import json
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
@@ -14,9 +14,9 @@ if os.path.exists(env_path):
                 k, v = line.split("=", 1)
                 os.environ.setdefault(k, v)
 
-from src.meta_agent.orchestrator import orchestrator
-from src.shared_state.redis_store import store
-from src.tools import tool_registry
+from src.meta_agent.orchestrator import orchestrator  # noqa: E402 - after manual .env load
+from src.shared_state.redis_store import store  # noqa: E402
+from src.tools import tool_registry  # noqa: E402
 
 # Clean up any leftover tools
 prebuilt = {"web_search", "file_reader", "code_executor"}
@@ -30,6 +30,7 @@ async def main():
 
     goal = "i wanna know about quantum computers"
     import time
+
     task_id = f"test_{int(time.time())}"
 
     print(f"Task: {task_id}")
@@ -47,25 +48,25 @@ async def main():
         await asyncio.sleep(3)
 
     result = await store.get_result(task_id)
-    print(f"\n=== RESULT ===")
+    print("\n=== RESULT ===")
     print(result[:500] if result else "(no result)")
 
     trace = await store.get_trace(task_id)
     print(f"\n=== TRACE ({len(trace)} events) ===")
     for entry in trace:
         t = entry.get("type", "")
-        agent = entry.get("agent_id", "")
         if t in ("plan", "agent_start", "agent_done", "tool_call_limit_reached"):
             preview = json.dumps(entry, default=str)[:200]
             print(f"  {t}: {preview}")
 
     # Count tool calls per agent
     from collections import Counter
+
     agent_tool_calls = Counter()
     for entry in trace:
         if entry.get("type") == "tool_call":
             agent_tool_calls[entry.get("agent_id", "?")] += 1
-    print(f"\n=== TOOL CALLS ===")
+    print("\n=== TOOL CALLS ===")
     for agent_id, count in agent_tool_calls.most_common():
         print(f"  {agent_id}: {count} calls")
 

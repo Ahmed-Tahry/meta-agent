@@ -1,5 +1,4 @@
 import pytest
-from unittest.mock import AsyncMock, patch
 
 from src.event_bus.bus import EventBus
 
