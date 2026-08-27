@@ -200,5 +200,3 @@ tests/                           # pytest suite (108 tests, 6 integration skippe
 ```
 
 Tests set `GEMINI_API_KEY=test-key` automatically. Integration tests are skipped by default.
-
-
