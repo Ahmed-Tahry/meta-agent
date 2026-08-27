@@ -7,6 +7,7 @@ from src.config import GEMINI_API_KEY, GEMINI_MODEL, LLM_TIMEOUT
 from src.event_bus.bus import event_bus
 from src.shared_state.redis_store import store
 from src.task_logger import get_logger
+from src.utils import extract_llm_text
 
 
 class Synthesizer:
@@ -55,14 +56,10 @@ class Synthesizer:
         return result
 
     async def _llm_synthesize(self, subtask_outputs: dict[str, Any]) -> str:
-        parts = []
-        for agent_id, output in subtask_outputs.items():
-            parts.append(f"## {agent_id}\n{output}")
-
         prompt = (
             "Synthesize the following agent outputs into a coherent final response.\n"
             "Merge findings, remove redundancy, and present a well-structured summary.\n\n"
-            + "\n\n".join(parts)
+            + "\n\n".join(self._format_parts(subtask_outputs))
         )
 
         messages = [
@@ -76,22 +73,10 @@ class Synthesizer:
         ]
 
         response = await self._get_llm().ainvoke(messages)
-        if isinstance(response.content, str):
-            return response.content
-        elif isinstance(response.content, list):
-            return "\n".join(
-                block.get("text", "")
-                if isinstance(block, dict)
-                else block.text
-                if hasattr(block, "text")
-                else str(block)
-                for block in response.content
-            ).strip()
-        return str(response.content)
+        return extract_llm_text(response.content)
+
+    def _format_parts(self, subtask_outputs: dict[str, Any]) -> list[str]:
+        return [f"## {agent_id}\n{output}" for agent_id, output in subtask_outputs.items()]
 
     def _fallback_synthesize(self, subtask_outputs: dict[str, Any]) -> str:
-        parts = []
-        for agent_id, output in subtask_outputs.items():
-            parts.append(f"## {agent_id}\n{output}")
-
-        return "\n\n".join(parts)
+        return "\n\n".join(self._format_parts(subtask_outputs))

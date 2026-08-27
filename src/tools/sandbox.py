@@ -125,10 +125,5 @@ class Sandbox:
             os.unlink(tmp.name)
 
     async def cleanup(self) -> None:
-        cmds = [
-            ["docker", "container", "prune", "-f"],
-            ["docker", "image", "prune", "-f"],
-        ]
-        for cmd in cmds:
-            proc = await asyncio.create_subprocess_exec(*cmd)
-            await proc.wait()
+        # removed destructive prune (host daemon) — no-op for compat
+        return

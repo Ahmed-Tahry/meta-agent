@@ -20,9 +20,6 @@ class AgentFactory:
         self.tool_composer = ToolComposer(tool_registry)
         self.tool_generator = ToolGenerator()
 
-    def _resolve_agent_cls(self, role: str) -> type[Agent]:
-        return Agent
-
     def _resolve_tools(self, tool_names: list[str]) -> list:
         resolved = []
         unregistered: list[str] = []
@@ -63,12 +60,11 @@ class AgentFactory:
         return generated
 
     def create(self, spec: AgentSpec) -> Agent:
-        agent_cls = self._resolve_agent_cls(spec.role)
         config = self.configs.get(spec.role, {})
         system_prompt = config.get("system_prompt", spec.goal)
         tools, _ = self._resolve_tools(spec.tools)
 
-        return agent_cls(
+        return Agent(
             agent_id=spec.agent_id,
             system_prompt=system_prompt,
             tools=tools,
@@ -79,7 +75,6 @@ class AgentFactory:
             for name in spec.tool_definitions:
                 if name not in spec.tools:
                     spec.tools.append(name)
-        agent_cls = self._resolve_agent_cls(spec.role)
         config = self.configs.get(spec.role, {})
         base_prompt = config.get("system_prompt", "")
         system_prompt = await self.prompt_builder.build(spec, base_prompt)
@@ -89,7 +84,7 @@ class AgentFactory:
             generated = await self._generate_missing(unregistered, spec.goal, spec.tool_definitions)
             tools.extend(generated)
 
-        return agent_cls(
+        return Agent(
             agent_id=spec.agent_id,
             system_prompt=system_prompt,
             tools=tools,

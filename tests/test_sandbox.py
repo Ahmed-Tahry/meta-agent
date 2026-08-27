@@ -85,12 +85,12 @@ class TestSandboxRun:
 class TestSandboxCleanup:
     @pytest.mark.asyncio
     async def test_cleanup(self, mocker):
-        mock_proc = mocker.AsyncMock()
-        mock_proc.returncode = 0
-        mocker.patch("asyncio.create_subprocess_exec", return_value=mock_proc)
+        mocked = mocker.patch("asyncio.create_subprocess_exec")
 
         s = Sandbox(image="test-cleanup")
         await s.cleanup()
+        # cleanup is now safe no-op — must not invoke destructive prune
+        mocked.assert_not_called()
 
 
 class TestSandboxIntegration:

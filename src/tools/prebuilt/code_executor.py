@@ -4,12 +4,9 @@ from src.tools import Tool
 from src.tools.sandbox import Sandbox, SandboxError, SandboxExecutionError, SandboxTimeout
 
 _sandbox = Sandbox()
-_sandbox_built = False
-_sandbox_build_tried = False
 
 
 async def code_executor(code: str, language: str = "python") -> str:
-    global _sandbox_built, _sandbox_build_tried
     log = get_current_logger()
 
     if language != "python":
@@ -18,13 +15,11 @@ async def code_executor(code: str, language: str = "python") -> str:
             "Only Python is supported in the sandboxed environment."
         )
 
-    if not _sandbox_built and not _sandbox_build_tried:
-        _sandbox_build_tried = True
+    if not _sandbox._built:
         if log:
             log.log("SANDBOX", "Building sandbox Docker image (first use)")
         try:
             await _sandbox.build()
-            _sandbox_built = True
             if log:
                 log.log("SANDBOX", "Sandbox image built successfully")
         except SandboxError as e:

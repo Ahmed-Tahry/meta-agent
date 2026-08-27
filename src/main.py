@@ -3,16 +3,9 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 
-# Load .env before any other imports that need env vars
-_env_path = Path(__file__).resolve().parents[1] / ".env"
-if _env_path.exists():
-    for _line in _env_path.read_text().splitlines():
-        _line = _line.strip()
-        if _line and not _line.startswith("#") and "=" in _line:
-            _k, _v = _line.split("=", 1)
-            import os
+from src.utils import load_env_file
 
-            os.environ.setdefault(_k, _v)
+load_env_file()
 
 
 from src.api.routes import router  # noqa: E402 - after manual .env load

@@ -6,6 +6,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from src.config import GEMINI_API_KEY, GEMINI_MODEL, LLM_TIMEOUT, SANDBOX_TIMEOUT, TOOL_GEN_RETRIES
 from src.tools import Tool
 from src.tools.sandbox import Sandbox, SandboxError, SandboxExecutionError, SandboxTimeout
+from src.utils import extract_llm_text
 
 GENERATION_PROMPT = """\
 Write a Python async function named {tool_name} that accomplishes:
@@ -20,17 +21,8 @@ Requirements:
 Only output the function code, no explanation."""
 
 
-TEST_HARNESS = """\
-import asyncio
-
-{code}
-
-async def main():
-    result = await {tool_name}("test input")
-    print(result)
-
-asyncio.run(main())
-"""
+def _build_harness(code: str, tool_name: str, call_arg: str) -> str:
+    return f"import asyncio\n\n{code}\n\nasync def main():\n    result = await {tool_name}({call_arg})\n    print(result)\n\nasyncio.run(main())\n"  # noqa: E501
 
 
 class ToolGenerator:
@@ -52,13 +44,13 @@ class ToolGenerator:
         return self._llm
 
     async def generate(self, tool_name: str, goal: str) -> Tool:
+        last_error = ""
         if not self._sandbox._built:
             try:
                 await self._sandbox.build()
-            except SandboxError:
-                pass
+            except SandboxError as e:
+                last_error = f"Sandbox build failed: {e}"
 
-        last_error = ""
         for attempt in range(1, TOOL_GEN_RETRIES + 1):
             code = await self._llm_generate(tool_name, goal, last_error)
             result = await self._test_in_sandbox(tool_name, code)
@@ -96,23 +88,10 @@ class ToolGenerator:
         ]
 
         response = await self._get_llm().ainvoke(messages)
-        if isinstance(response.content, str):
-            content = response.content
-        elif isinstance(response.content, list):
-            content = "\n".join(
-                block.get("text", "")
-                if isinstance(block, dict)
-                else block.text
-                if hasattr(block, "text")
-                else str(block)
-                for block in response.content
-            ).strip()
-        else:
-            content = str(response.content)
-        return self._extract_code(content)
+        return self._extract_code(extract_llm_text(response.content))
 
     async def _test_in_sandbox(self, tool_name: str, code: str) -> bool | str:
-        script = TEST_HARNESS.format(code=code, tool_name=tool_name)
+        script = _build_harness(code, tool_name, '"test input"')
         try:
             await self._sandbox.run(script, timeout=SANDBOX_TIMEOUT)
             return True
@@ -139,17 +118,7 @@ class ToolGenerator:
 
             log = get_current_logger()
 
-            harness = f"""\
-import asyncio
-
-{code}
-
-async def main():
-    result = await {tool_name}({repr(input_text)})
-    print(result)
-
-asyncio.run(main())
-"""
+            harness = _build_harness(code, tool_name, repr(input_text))
             if log:
                 log.log(
                     "SANDBOX",

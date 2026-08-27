@@ -3,6 +3,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 from src.config import GEMINI_API_KEY, GEMINI_MODEL, LLM_TIMEOUT
 from src.types.agent_spec import AgentSpec
+from src.utils import extract_llm_text
 
 
 class PromptBuilder:
@@ -41,20 +42,7 @@ class PromptBuilder:
         ]
 
         response = await self._get_llm().ainvoke(messages)
-        if isinstance(response.content, str):
-            content = response.content
-        elif isinstance(response.content, list):
-            content = "\n".join(
-                block.get("text", "")
-                if isinstance(block, dict)
-                else block.text
-                if hasattr(block, "text")
-                else str(block)
-                for block in response.content
-            ).strip()
-        else:
-            content = str(response.content)
-        content = content.strip()
+        content = extract_llm_text(response.content).strip()
         if not content:
             return self._fallback_prompt(spec, base_prompt)
         return content

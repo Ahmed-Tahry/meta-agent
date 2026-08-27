@@ -77,8 +77,10 @@ class TestAgent:
 class TestAgentSubclasses:
     def test_agent_is_used_for_any_role(self):
         from src.factory.agent_factory import AgentFactory
+        from src.types.agent_spec import AgentSpec
 
         factory = AgentFactory()
         for role in ["researcher", "coder", "writer", "data_analyzer", "reviewer"]:
-            agent = factory._resolve_agent_cls(role)
-            assert agent is Agent
+            spec = AgentSpec(agent_id="test", role=role, goal="test", tools=[])
+            agent = factory.create(spec)
+            assert isinstance(agent, Agent)
